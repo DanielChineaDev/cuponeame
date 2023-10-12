@@ -89,7 +89,10 @@ struct CouponDetail: View {
                     )
                     .foregroundColor(.white)
                     .cornerRadius(40)
+                    .opacity(coupon.cooldownExpirationDate ?? Date() > Date() ? 0.5 : 1.0) // 0.5 opacidad si está en cooldown
             }
+            .disabled(coupon.cooldownExpirationDate ?? Date() > Date()) // Desactivar botón si está en cooldown
+
         }
         .padding(12)
         .alert(isPresented: $isRedeemConfirmationPresented) {
@@ -98,8 +101,6 @@ struct CouponDetail: View {
                 message: Text("¿Estás seguro de que deseas canjear este cupón?"),
                 primaryButton: .default(
                     Text("Canjear")
-                    .foregroundColor(coupon.isAvailable ? .blue : .gray)
-                    .disabled(!coupon.isAvailable) as! Text
                 ) {
                     // Actualiza el estado del cupón a "usado" en tu modelo
                     // Aquí deberías tener una función en tu ViewModel que actualice el cupón en Firestore.
@@ -113,8 +114,10 @@ struct CouponDetail: View {
     }
 }
 
+/*
 struct CouponDetail_Previews: PreviewProvider {
     static var previews: some View {
         CouponDetail(coupon: Coupon(id: "1", title: "Cupón 1", category: "Categoría 1", description: "Descripción larga del cupón 1.", short_description: "Descripción corta 1.", imageName: "c1", used: false))
     }
 }
+*/
