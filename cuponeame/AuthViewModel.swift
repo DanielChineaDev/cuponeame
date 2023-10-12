@@ -32,7 +32,6 @@ class AuthViewModel: ObservableObject {
 
     func signUp(email: String, password: String, name: String){
         let db = Firestore.firestore()
-
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
             if let user = result?.user {
                 self?.user = user
@@ -43,6 +42,7 @@ class AuthViewModel: ObservableObject {
                 ]) { error in
                     if let error = error {
                         print("Error al crear el documento del usuario: \(error)")
+
                     } else {
                         // Añadir los cupones predeterminados
                         self?.couponViewModel.addDefaultCouponsToUser(userID: user.uid)

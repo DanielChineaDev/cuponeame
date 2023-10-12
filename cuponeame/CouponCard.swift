@@ -57,8 +57,10 @@ struct CouponCard: View {
     }
 }
 
+/*
 struct CouponCard_Previews: PreviewProvider {
     static var previews: some View {
         CouponCard(coupon: Coupon(id: "", title: "Cupón 1", category: "Categoría 1", description: "Descripción larga del cupón 1.", short_description: "Descripción corta 1.", imageName: "c1", used: false))
     }
 }
+*/
