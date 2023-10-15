@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct CardView: View {
-    let coupon: Coupon
-    
+    let coupon: Coupon    
     @State private var progressValue: Double = 0.3 // por ejemplo, 70% completado
-    
+    @ObservedObject private var imageLoader = ImageLoader()
+
     var body: some View {
         ZStack {
             VStack(alignment: .leading) {
@@ -51,17 +51,24 @@ struct CardView: View {
             }
         }
         .background(
-            FirebaseImageView(url: URL(string: coupon.imageName)!)
-                .aspectRatio(contentMode: .fit)
+            imageLoader.image?
+                .resizable()
+                .aspectRatio(contentMode: .fill)
                 .cornerRadius(20)
+                .clipped()
+            // placeholder en caso de que la imagen no esté cargada
         )
-//        .background(
-//            Image(coupon.imageName)
-//                .resizable()
-//                .aspectRatio(contentMode: .fill) // Cambiar de .fill a .fit aquí
-//                .cornerRadius(20)
-//                .clipped()
-//        )
+        .onAppear {
+            imageLoader.downloadImageFromFirebase(imageName: coupon.imageName)
+        }
+        .frame(maxWidth: .infinity, minHeight: 230, maxHeight: 230)
+        .background(
+            Image(coupon.imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fill) // Cambiar de .fill a .fit aquí
+                .cornerRadius(20)
+                .clipped()
+        )
         .frame(maxWidth: .infinity, minHeight: 230, maxHeight: 230)
         .cornerRadius(20)
     }
