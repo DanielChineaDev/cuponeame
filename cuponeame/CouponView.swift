@@ -18,7 +18,7 @@ struct CouponView: View {
                 LazyVStack(spacing: 20) {
                     ForEach(couponViewModel.coupons) { coupon in
                         NavigationLink(destination: CouponDetail(coupon: coupon)) {
-                            CouponCard(coupon: coupon)
+                            CardView(coupon: coupon)
                         }
                     }
                 }

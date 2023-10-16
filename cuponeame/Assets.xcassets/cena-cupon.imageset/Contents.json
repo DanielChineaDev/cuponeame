@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "cena-cupon.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
