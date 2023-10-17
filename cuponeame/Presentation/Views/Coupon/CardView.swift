@@ -1,9 +1,16 @@
 import SwiftUI
+import FirebaseStorage
+import Kingfisher
 
 struct CardView: View {
-    let coupon: Coupon    
-    @State private var progressValue: Double = 0.3 // por ejemplo, 70% completado
-    @ObservedObject private var imageLoader = ImageLoader()
+    let coupon: Coupon
+    @State private var progressValue: Double = 0.7
+    @State private var imageURL: URL?
+    
+    @ObservedObject var authVM: AuthViewModel
+    
+    @State private var animationProgress: Double = 0.0
+    @State private var isLoading: Bool = true
 
     var body: some View {
         ZStack {
@@ -50,27 +57,28 @@ struct CardView: View {
                 .padding(.vertical, 12)
             }
         }
-        .background(
-            imageLoader.image?
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .cornerRadius(20)
-                .clipped()
-            // placeholder en caso de que la imagen no esté cargada
-        )
-        .onAppear {
-            imageLoader.downloadImageFromFirebase(imageName: coupon.imageName)
-        }
         .frame(maxWidth: .infinity, minHeight: 230, maxHeight: 230)
         .background(
-            Image(coupon.imageName)
+            KFImage(imageURL)
                 .resizable()
-                .aspectRatio(contentMode: .fill) // Cambiar de .fill a .fit aquí
+                .placeholder {
+                    ProgressView().frame(width: 40, height: 40)
+                }
+                .aspectRatio(contentMode: .fill)
                 .cornerRadius(20)
                 .clipped()
         )
         .frame(maxWidth: .infinity, minHeight: 230, maxHeight: 230)
         .cornerRadius(20)
+        .onAppear {
+            authVM.getDownloadableURL(forPath: coupon.imageName) { (url, error) in
+                if let error = error {
+                    print("Error obteniendo la URL: \(error.localizedDescription)")
+                } else if let url = url {
+                    self.imageURL = url
+                }
+            }
+        }
     }
 }
 

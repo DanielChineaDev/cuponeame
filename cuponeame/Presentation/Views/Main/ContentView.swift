@@ -193,6 +193,19 @@ struct ContentView: View {
                         
                         Spacer()
                         
+                        TextField("Nombre", text: $name)
+                            .padding(20)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 40)
+                                    .stroke(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.purple.opacity(0.8), Color.pink.opacity(0.8)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                        , lineWidth: 2)
+                            )
+                        
                         TextField("Correo electrónico", text: $email)
                             .padding(20)
                             .overlay(

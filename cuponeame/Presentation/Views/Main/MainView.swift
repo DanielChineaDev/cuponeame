@@ -21,7 +21,7 @@ struct MainView: View {
                     Image(systemName: "ticket.fill") // Icono de la pestaña 1
                     Text("Inicio")
                 }
-                .tag(0) // Etiqueta para la selección
+                .tag(0)
             
             // Segunda pestaña
             Text("Pestaña 2")
@@ -29,7 +29,7 @@ struct MainView: View {
                     Image(systemName: "plus.circle.fill") // Icono de la pestaña 2
                     Text("Crear")
                 }
-                .tag(1) // Etiqueta para la selección
+                .tag(1)
             
             // Tercera pestaña
             Text("Pestaña 3")
@@ -37,7 +37,7 @@ struct MainView: View {
                     Image(systemName: "gearshape.circle.fill") // Icono de la pestaña 3
                     Text("Ajustes")
                 }
-                .tag(2) // Etiqueta para la selección
+                .tag(2)
         }
     }
 }

@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import Kingfisher
 
-struct CouponDetail: View {
+struct CouponDetailView: View {
     @ObservedObject var coupon: Coupon
+    @State private var imageURL: URL?
     
     let randomBar = Int.random(in: 1000000000...9999999999)
     let discount = Int.random(in: 5...90)
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var couponViewModel: CouponViewModel
-    
+
     @State private var isRedeemConfirmationPresented = false
     @State private var remainingTime: String = "CANJEAR"
     
@@ -26,55 +28,82 @@ struct CouponDetail: View {
             Spacer()
             
             VStack (alignment: .leading){
-                Text(coupon.title)
-                    .font(.system(size: 48)) // Tamaño de fuente personalizado
-                    .fontWeight(.heavy)
+                HStack{
+                    Text(coupon.title)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding(8)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(10)
+                        .foregroundColor(.black)
+                    
+                    Spacer()
+                    
+                    Text("\(coupon.redeemCount)/\(coupon.redeemLimit)")
+                        .frame(maxWidth: 30)
+                }
                 
                 Text("\(discount)%")
-                    .font(.system(size: 16)) // Tamaño de fuente personalizado
-                    .fontWeight(.light)
+                    .font(.subheadline)
+                    .padding(8)
+                    .background(Color.white.opacity(0.8))
+                    .cornerRadius(10)
+                    .foregroundColor(.black)
                 
                 Spacer()
                 
                 HStack{
                     Text(coupon.description)
                         .frame(maxWidth: .infinity)
+                        .padding(8)
+                        .background(Color.white.opacity(0.8))
+                        .cornerRadius(10)
+                        .foregroundColor(.black)
                     
                     Spacer()
                 }
                 
                 Spacer()
                 
+                VStack{
+                    Image("barcode")
+                        .resizable()
+                        .frame(maxWidth: .infinity, maxHeight: 50)
+                    
+                    Spacer()
+                    
+                    Text("\(randomBar)")
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: 100)
+                .background(Color(.white))
+                .cornerRadius(20)
+                .shadow(radius: 5)
+                                
             }
             .navigationBarTitle("Detalle de Cupón")
-            .padding(40)
-            .frame(maxWidth: .infinity, maxHeight: 400)
-            .background(
-                Image("c1")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            )
-            .foregroundColor(.white)
-            .cornerRadius(40)
-            .shadow(radius: 5)
-            
-            VStack{
-                Image("barcode")
-                    .resizable()
-                //.aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: .infinity, maxHeight: 50)
-                
-                Text("\(randomBar)")
+            .onAppear {
+                authViewModel.getDownloadableURL(forPath: coupon.imageName) { (url, error) in
+                    if let error = error {
+                        print("Error obteniendo la URL: \(error.localizedDescription)")
+                    } else if let url = url {
+                        self.imageURL = url
+                    }
+                }
             }
             .padding(20)
-            .frame(maxWidth: .infinity, maxHeight: 100)
-            .background(Color(.white))
-            .cornerRadius(40)
-            .shadow(radius: 5)
-            
-            Spacer()
-            
-            Text("Canjeado: \(coupon.redeemCount) de \(coupon.redeemLimit)")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+                KFImage(imageURL)
+                    .resizable()
+                    .placeholder {
+                        ProgressView().frame(width: 40, height: 40)
+                    }
+                    .aspectRatio(contentMode: .fill)
+                    .cornerRadius(20)
+                    .clipped()
+            )
+            .cornerRadius(20)
             
             Spacer()
             
@@ -155,9 +184,9 @@ struct CouponDetail: View {
 }
 
 
- struct CouponDetail_Previews: PreviewProvider {
+ struct CouponDetailView_Previews: PreviewProvider {
      static var previews: some View {
-         CouponDetail(coupon: Coupon(
+         CouponDetailView(coupon: Coupon(
              id: "1",
              title: "Cupón 1",
              category: "Categoría 1",
