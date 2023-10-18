@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct CouponDetailView: View {
-    @ObservedObject var coupon: Coupon
+    @ObservedObject var coupon: CouponModel
     @State private var imageURL: URL?
     
     let randomBar = Int.random(in: 1000000000...9999999999)
@@ -186,7 +186,7 @@ struct CouponDetailView: View {
 
  struct CouponDetailView_Previews: PreviewProvider {
      static var previews: some View {
-         CouponDetailView(coupon: Coupon(
+         CouponDetailView(coupon: CouponModel(
              id: "1",
              title: "Cupón 1",
              category: "Categoría 1",

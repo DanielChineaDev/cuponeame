@@ -8,36 +8,17 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var selectedTab = 0 // Variable para controlar la pestaña seleccionada
+    @State private var selectedTab = 0
     @EnvironmentObject var authViewModel: AuthViewModel
 
-
     var body: some View {
-        TabView(selection: $selectedTab) { // TabView con selección
-            // Primera pestaña
-            CouponView(authViewModel: authViewModel, couponViewModel: authViewModel.couponViewModel)
-                .environmentObject(authViewModel.couponViewModel)
-                .tabItem {
-                    Image(systemName: "ticket.fill") // Icono de la pestaña 1
-                    Text("Inicio")
-                }
-                .tag(0)
-            
-            // Segunda pestaña
-            Text("Pestaña 2")
-                .tabItem {
-                    Image(systemName: "plus.circle.fill") // Icono de la pestaña 2
-                    Text("Crear")
-                }
-                .tag(1)
-            
-            // Tercera pestaña
-            Text("Pestaña 3")
-                .tabItem {
-                    Image(systemName: "gearshape.circle.fill") // Icono de la pestaña 3
-                    Text("Ajustes")
-                }
-                .tag(2)
+        TabView(selection: $selectedTab) {
+            CouponTabView()
+                .environmentObject(authViewModel)
+
+            CreateTabView()
+
+            SettingsTabView()
         }
     }
 }

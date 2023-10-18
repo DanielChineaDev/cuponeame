@@ -8,18 +8,65 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @EnvironmentObject private var authViewModel: AuthViewModel
+    @Binding var email: String
+    @Binding var password: String
+    @EnvironmentObject var authViewModel: AuthViewModel
 
     var body: some View {
-        VStack {
-            Spacer()
-            TextField("Correo electrónico", text: $email)
-                .padding()
-            SecureField("Contraseña", text: $password)
-                .padding()
+        VStack{
+            HStack{
+                Text("Iniciar sesión")
+                    .font(.system(size: 32)) // Tamaño de fuente personalizado
+                    .fontWeight(.heavy)
+                    .foregroundColor(Color(.black))
+                Spacer()
+            }
 
+            Spacer()
+            
+            
+            Image("placeholder")
+                .resizable()
+                .frame(maxWidth: 150, maxHeight: 150)
+                .aspectRatio(contentMode: .fit)
+            
+            Spacer()
+            
+            TextField("Correo electrónico", text: $email)
+                .padding(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.purple.opacity(0.8), Color.pink.opacity(0.8)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            , lineWidth: 2)
+                )
+            
+            SecureField("Contraseña", text: $password)
+                .padding(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 40)
+                        .stroke(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.purple.opacity(0.8), Color.pink.opacity(0.8)]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            , lineWidth: 2)
+                )
+
+            HStack{
+                Spacer()
+                Text("He olvidado mi contraseña")
+                    .foregroundColor(Color.gray)
+            }
+            
+            
+            Spacer()
+            
             Button("INICIAR SESIÓN") {
                 authViewModel.signIn(email: email, password: password)
             }
@@ -35,32 +82,7 @@ struct LoginView: View {
             )
             .foregroundColor(.white)
             .cornerRadius(40)
-
-            Button("REGISTRARSE") {
-                //authViewModel.signUp(email: email, password: password)
-            }
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .padding(20)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.purple.opacity(0.8), Color.pink.opacity(0.8)]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .foregroundColor(.white)
-            .cornerRadius(40)
-            
-            Spacer()
-            
         }
         .padding(20)
-    }
-}
-
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
     }
 }

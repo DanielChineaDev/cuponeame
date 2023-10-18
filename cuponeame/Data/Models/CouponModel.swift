@@ -7,7 +7,48 @@
 
 import Foundation
 
-class Coupon: Identifiable, ObservableObject {
+/*
+class CouponModel: Identifiable, ObservableObject {
+    var id: String
+    var title: String
+    var category: String
+    var description: String
+    var short_description: String
+    var imageName: String
+    var used: Bool
+    var cooldownTime: TimeInterval?
+    var cooldownExpirationDate: Date?
+    var redeemCount: Int
+    var redeemLimit: Int
+}
+
+extension CouponModel {
+    mutating func redeem() {
+        if redeemCount < redeemLimit {
+            self.used = true
+
+            if let cooldown = cooldownTime {
+                self.cooldownExpirationDate = Date().addingTimeInterval(cooldown)
+            }
+
+            self.redeemCount += 1
+        } else {
+            print("El cupón ha alcanzado su límite de canjes.")
+        }
+    }
+
+    mutating func isAvailable() -> Bool {
+        guard let expirationDate = cooldownExpirationDate else { return true }
+        let isPastExpiration = Date() > expirationDate
+        if isPastExpiration {
+            self.used = false
+        }
+        return isPastExpiration
+    }
+}
+*/
+
+class CouponModel: Identifiable, ObservableObject {
     var id: String
     var title: String
     var category: String
@@ -56,11 +97,5 @@ class Coupon: Identifiable, ObservableObject {
         }
         return isPastExpiration
     }
-
-     
 }
-
-
-
-
 
