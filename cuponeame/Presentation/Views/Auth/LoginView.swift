@@ -16,7 +16,7 @@ struct LoginView: View {
         VStack{
             HStack{
                 Text("Iniciar sesión")
-                    .font(.system(size: 32)) // Tamaño de fuente personalizado
+                    .font(.system(size: 32))
                     .fontWeight(.heavy)
                     .foregroundColor(Color(.black))
                 Spacer()
