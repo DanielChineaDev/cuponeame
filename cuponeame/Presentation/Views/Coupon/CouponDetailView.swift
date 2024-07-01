@@ -73,6 +73,7 @@ struct CouponDetailView: View {
                     Spacer()
                     
                     Text("\(randomBar)")
+
                 }
                 .padding(20)
                 .frame(maxWidth: .infinity, maxHeight: 100)

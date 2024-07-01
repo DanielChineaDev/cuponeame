@@ -21,16 +21,15 @@ struct BlurButtonStyle: ButtonStyle {
     }
 }
 
-
-
-struct OutlineButtonStyle: ButtonStyle {
+struct BlurRedButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding(20)
-            .background(BlurView(style: .regular))
-            .foregroundColor(.white)
+            .background(Color(.red).opacity(0.2))
+            .background(BlurView(style: .systemMaterial))
+            .foregroundColor(.primary)
             .cornerRadius(20)
     }
 }
@@ -65,7 +64,7 @@ struct ButtonStyleView_Previews: PreviewProvider {
                     .buttonStyle(BlurButtonStyle())
                 
                 Button("SECUNDARIO", action: {})
-                    .buttonStyle(OutlineButtonStyle())
+                    .buttonStyle(BlurButtonStyle())
             }
             .padding()
         }
