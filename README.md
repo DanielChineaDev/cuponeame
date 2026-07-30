@@ -27,16 +27,18 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 | Bienvenida | Lista | Detalle |
 |:---:|:---:|:---:|
 | <img src="docs/capturas/bienvenida.png" width="230" /> | <img src="docs/capturas/lista.png" width="230" /> | <img src="docs/capturas/detalle.png" width="230" /> |
-| **Crear** | **Modo pareja** | **Historial** |
-| <img src="docs/capturas/crear.png" width="230" /> | <img src="docs/capturas/pareja.png" width="230" /> | <img src="docs/capturas/historial.png" width="230" /> |
+| **Crear** | **Ajustes** | **Historial** |
+| <img src="docs/capturas/crear.png" width="230" /> | <img src="docs/capturas/ajustes.png" width="230" /> | <img src="docs/capturas/historial.png" width="230" /> |
 
 <sub>Gradiente morado→rosa + Liquid Glass + tarjetas foto-a-sangre: el lenguaje visual de Cuponéame.</sub>
 
 | Login | Registro |
 |:---:|:---:|
 | <img src="docs/capturas/login.png" width="230" /> | <img src="docs/capturas/registro.png" width="230" /> |
-| **Modo oscuro** | **Widget** |
-| <img src="docs/capturas/oscuro.png" width="230" /> | <img src="docs/capturas/widget.png" width="230" /> |
+| **Modo pareja** | **Modo oscuro** |
+| <img src="docs/capturas/pareja.png" width="230" /> | <img src="docs/capturas/oscuro.png" width="230" /> |
+| **Widget** | |
+| <img src="docs/capturas/widget.png" width="230" /> | |
 
 <sub>Identidad rediseñada: logo vectorial de ticket (el mismo del AppIcon), tema Sistema/Claro/Oscuro y widget «Próximo cupón».</sub>
 
@@ -155,6 +157,7 @@ firebase deploy --only firestore:rules,storage
 - [x] Widget «Próximo cupón» (WidgetKit + App Group)
 - [x] Reglas de seguridad de Firestore/Storage por usuario (en el repo; falta desplegar + App Check)
 - [x] Rediseño de identidad: logo vectorial + AppIcon nuevos, bienvenida animada y login/registro de marca
+- [x] Rediseño interior: lista con saludo y buscador de marca, Crear con banner y tarjetas, carnet degradado en Ajustes e Historial con resumen
 - [ ] Push remota (APNs/FCM) con la app cerrada — requiere Cloud Functions y clave APNs
 
 ---
