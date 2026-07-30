@@ -16,6 +16,8 @@ struct SettingsScreen: View {
     var body: some View {
         NavigationStack {
             Form {
+                screenTitle
+
                 profileCard
 
                 Section("Pareja") {
@@ -117,7 +119,7 @@ struct SettingsScreen: View {
                     }
                 }
             }
-            .navigationTitle("Ajustes")
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showAvatarPicker) {
                 AvatarPickerSheet()
             }
@@ -147,11 +149,25 @@ struct SettingsScreen: View {
         }
     }
 
-    // MARK: - Carnet de perfil
+    // MARK: - Cabecera y carnet
+
+    private var screenTitle: some View {
+        Section {
+            Text("Ajustes")
+                .font(.system(size: 32, weight: .heavy, design: .rounded))
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
+    }
+
+    /// El carnet es un ticket, como todo en la app: datos arriba, perforación
+    /// con muescas y el talón con las estadísticas.
+    private static let carnetTopHeight: CGFloat = 108
 
     private var profileCard: some View {
         Section {
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 HStack(spacing: 16) {
                     Button {
                         showAvatarPicker = true
@@ -170,12 +186,18 @@ struct SettingsScreen: View {
                         Text(auth.userName ?? "…")
                             .font(.system(size: 24, weight: .heavy, design: .rounded))
                             .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                         Text(auth.isDemoMode ? "Modo demo · los cambios no se guardan" : auth.email)
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.9))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
-                    Spacer()
+                    Spacer(minLength: 0)
                 }
+                .padding(.horizontal, 18)
+                .frame(height: Self.carnetTopHeight)
 
                 HStack(spacing: 0) {
                     stat(value: store.coupons.count, label: "Cupones", icon: "ticket.fill")
@@ -184,14 +206,16 @@ struct SettingsScreen: View {
                     statDivider
                     stat(value: store.coupons.filter(\.favorite).count, label: "Favoritos", icon: "heart.fill")
                 }
-                .padding(.vertical, 10)
-                .cuponGlass(cornerRadius: 16)
+                .padding(.vertical, 12)
+                .padding(.horizontal, 18)
             }
-            .padding(18)
             .background(
                 LinearGradient(colors: [CuponColors.brandPurple, CuponColors.brandPink],
-                               startPoint: .topLeading, endPoint: .bottomTrailing),
-                in: RoundedRectangle(cornerRadius: 24))
+                               startPoint: .topLeading, endPoint: .bottomTrailing))
+            .clipShape(PunchedTicketShape(notchY: Self.carnetTopHeight,
+                                          cornerRadius: 24, notchRadius: 10),
+                       style: FillStyle(eoFill: true))
+            .overlay(TicketPerforation(y: Self.carnetTopHeight, tint: .white.opacity(0.5)))
         }
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
