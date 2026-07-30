@@ -262,7 +262,14 @@ struct CouponFormScreen: View {
         longDescription = coupon.description
         category = CouponCategory(rawValue: coupon.category) ?? .personalizado
         imageName = coupon.imageName
-        cooldown = coupon.cooldownTime
+        // Cooldowns legacy que no coinciden con ningún preset: al más cercano,
+        // para que el picker no se quede sin selección.
+        if let current = coupon.cooldownTime {
+            cooldown = Self.cooldownOptions.compactMap(\.value)
+                .min { abs($0 - current) < abs($1 - current) }
+        } else {
+            cooldown = nil
+        }
         redeemLimit = coupon.redeemLimit
     }
 
