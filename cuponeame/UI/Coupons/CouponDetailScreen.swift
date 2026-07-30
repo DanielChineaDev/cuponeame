@@ -13,6 +13,7 @@ struct CouponDetailScreen: View {
     @State private var showRedeemConfirmation = false
     @State private var showDeleteConfirmation = false
     @State private var showEditSheet = false
+    @State private var showGifted = false
 
     var body: some View {
         if let coupon = store.coupon(id: couponID) {
@@ -54,6 +55,18 @@ struct CouponDetailScreen: View {
                     } label: {
                         Label("Editar", systemImage: "pencil")
                     }
+                    if let partnerName = auth.partnerName, let partnerUID = auth.partnerUID {
+                        Button {
+                            Task {
+                                if await store.gift(coupon, to: partnerUID,
+                                                    from: auth.userName ?? "Tu pareja") {
+                                    showGifted = true
+                                }
+                            }
+                        } label: {
+                            Label("Regalar a \(partnerName)", systemImage: "gift")
+                        }
+                    }
                     Button(role: .destructive) {
                         showDeleteConfirmation = true
                     } label: {
@@ -76,6 +89,11 @@ struct CouponDetailScreen: View {
             Button("Cancelar", role: .cancel) {}
         } message: {
             Text(redeemMessage(for: coupon))
+        }
+        .alert("¡Cupón enviado! 🎁", isPresented: $showGifted) {
+            Button("Genial") {}
+        } message: {
+            Text("\(auth.partnerName ?? "Tu pareja") ya lo tiene en su talonario.")
         }
         .alert("¿Eliminar \"\(coupon.title)\"?", isPresented: $showDeleteConfirmation) {
             Button("Eliminar", role: .destructive) {
@@ -109,6 +127,12 @@ struct CouponDetailScreen: View {
             Label(coupon.category, systemImage: coupon.categoryIcon)
                 .font(.subheadline)
                 .chip()
+
+            if let from = coupon.from {
+                Label("De \(from) 💜", systemImage: "gift.fill")
+                    .font(.subheadline.bold())
+                    .chip()
+            }
 
             Spacer()
 

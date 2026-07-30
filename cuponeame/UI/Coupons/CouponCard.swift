@@ -18,6 +18,12 @@ struct CouponCard: View {
                         .font(.subheadline)
                         .chipBackground()
 
+                    if let from = coupon.from {
+                        Label("De \(from)", systemImage: "gift.fill")
+                            .font(.footnote.bold())
+                            .chipBackground()
+                    }
+
                     Spacer()
 
                     statusChip

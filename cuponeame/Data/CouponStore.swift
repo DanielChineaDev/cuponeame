@@ -200,6 +200,31 @@ final class CouponStore {
         }
     }
 
+    // MARK: - Regalar (modo pareja)
+
+    /// Envía una copia limpia del cupón al talonario de la pareja, firmada
+    /// con el nombre de quien lo regala (campo `from`).
+    @discardableResult
+    func gift(_ coupon: Coupon, to partnerUID: String, from senderName: String) async -> Bool {
+        var gifted = coupon
+        gifted.id = ""
+        gifted.from = senderName
+        gifted.used = false
+        gifted.redeemCount = 0
+        gifted.cooldownExpirationDate = nil
+        gifted.favorite = false
+        gifted.createdAt = Date()
+        if isDemo { return true }
+        do {
+            _ = try await db.collection("users").document(partnerUID)
+                .collection("coupons").addDocument(data: gifted.firestoreData)
+            return true
+        } catch {
+            errorMessage = "No se pudo enviar el cupón."
+            return false
+        }
+    }
+
     // MARK: - Pack de ejemplo
 
     /// Añade el pack de cupones por defecto a la cuenta (alta y restauración).

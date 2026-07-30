@@ -67,7 +67,8 @@ final class CouponTests: XCTestCase {
             cooldownExpirationDate: Date(timeIntervalSince1970: 1_700_000_000),
             redeemCount: 2,
             redeemLimit: 5,
-            favorite: true)
+            favorite: true,
+            from: "Pao")
         original.createdAt = Date(timeIntervalSince1970: 1_690_000_000)
 
         let restored = Coupon(id: "doc1", data: original.firestoreData)
@@ -96,6 +97,7 @@ final class CouponTests: XCTestCase {
         XCTAssertFalse(coupon.favorite)
         XCTAssertNil(coupon.createdAt)
         XCTAssertNil(coupon.cooldownExpirationDate)
+        XCTAssertNil(coupon.from)
         XCTAssertEqual(coupon.redeemLimit, 5)
     }
 

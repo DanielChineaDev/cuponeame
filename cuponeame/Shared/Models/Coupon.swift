@@ -46,6 +46,8 @@ struct Coupon: Identifiable, Equatable {
     var redeemLimit: Int
     var favorite: Bool
     var createdAt: Date?
+    /// Nombre de quien regaló el cupón (modo pareja); nil si es propio.
+    var from: String?
 
     init(id: String = "",
          title: String = "",
@@ -59,7 +61,8 @@ struct Coupon: Identifiable, Equatable {
          redeemCount: Int = 0,
          redeemLimit: Int = 5,
          favorite: Bool = false,
-         createdAt: Date? = nil) {
+         createdAt: Date? = nil,
+         from: String? = nil) {
         self.id = id
         self.title = title
         self.category = category
@@ -73,6 +76,7 @@ struct Coupon: Identifiable, Equatable {
         self.redeemLimit = redeemLimit
         self.favorite = favorite
         self.createdAt = createdAt
+        self.from = from
     }
 }
 
@@ -138,7 +142,8 @@ extension Coupon {
             redeemCount: data["redeemCount"] as? Int ?? 0,
             redeemLimit: data["redeemLimit"] as? Int ?? 5,
             favorite: data["favorite"] as? Bool ?? false,
-            createdAt: Self.date(from: data["createdAt"]))
+            createdAt: Self.date(from: data["createdAt"]),
+            from: data["from"] as? String)
     }
 
     var firestoreData: [String: Any] {
@@ -156,6 +161,7 @@ extension Coupon {
         data["cooldownTime"] = cooldownTime ?? NSNull()
         data["cooldownExpirationDate"] = cooldownExpirationDate.map(Timestamp.init(date:)) ?? NSNull()
         data["createdAt"] = Timestamp(date: createdAt ?? Date())
+        data["from"] = from ?? NSNull()
         return data
     }
 

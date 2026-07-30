@@ -24,8 +24,10 @@ struct CouponFormScreen: View {
 
     @State private var photoItem: PhotosPickerItem?
     @State private var customPhoto: UIImage?
+    @State private var giftToPartner = false
     @State private var isSaving = false
     @State private var showSaved = false
+    @State private var savedMessage = ""
     @State private var saveError: String?
 
     /// Presets de tiempo de espera entre canjeos.
@@ -49,6 +51,16 @@ struct CouponFormScreen: View {
 
     var body: some View {
         Form {
+            if let partnerName = auth.partnerName, !isEditing {
+                Section("Destinatario") {
+                    Picker("Para", selection: $giftToPartner) {
+                        Text("Para mí").tag(false)
+                        Text("Para \(partnerName) 💝").tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                }
+            }
+
             Section("Cupón") {
                 TextField("Título", text: $title)
                 TextField("Descripción corta", text: $shortDescription)
@@ -99,8 +111,12 @@ struct CouponFormScreen: View {
                 } label: {
                     if isSaving {
                         ProgressView().frame(maxWidth: .infinity)
+                    } else if isEditing {
+                        Text("GUARDAR CAMBIOS")
+                    } else if giftToPartner, let partnerName = auth.partnerName {
+                        Text("ENVIAR A \(partnerName.uppercased()) 🎁")
                     } else {
-                        Text(isEditing ? "GUARDAR CAMBIOS" : "CREAR CUPÓN")
+                        Text("CREAR CUPÓN")
                     }
                 }
                 .buttonStyle(BrandButtonStyle())
@@ -128,10 +144,8 @@ struct CouponFormScreen: View {
                 }
             }
         }
-        .alert("¡Cupón creado!", isPresented: $showSaved) {
+        .alert(savedMessage, isPresented: $showSaved) {
             Button("Genial") {}
-        } message: {
-            Text("Ya está disponible en tu lista de cupones.")
         }
     }
 
@@ -226,7 +240,14 @@ struct CouponFormScreen: View {
                 imageName: finalImageName,
                 cooldownTime: cooldown,
                 redeemLimit: redeemLimit)
-            await store.save(coupon)
+            if giftToPartner, let partnerUID = auth.partnerUID {
+                guard await store.gift(coupon, to: partnerUID,
+                                       from: auth.userName ?? "Tu pareja") else { return }
+                savedMessage = "¡Cupón enviado a \(auth.partnerName ?? "tu pareja")! 🎁"
+            } else {
+                await store.save(coupon)
+                savedMessage = "¡Cupón creado! Ya está en tu lista."
+            }
             resetForm()
             showSaved = true
 
@@ -254,5 +275,6 @@ struct CouponFormScreen: View {
         redeemLimit = 5
         customPhoto = nil
         photoItem = nil
+        giftToPartner = false
     }
 }
