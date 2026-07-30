@@ -32,11 +32,13 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 
 <sub>Gradiente morado→rosa + Liquid Glass + tarjetas foto-a-sangre: el lenguaje visual de Cuponéame.</sub>
 
-| Modo oscuro | Widget |
+| Login | Registro |
 |:---:|:---:|
+| <img src="docs/capturas/login.png" width="230" /> | <img src="docs/capturas/registro.png" width="230" /> |
+| **Modo oscuro** | **Widget** |
 | <img src="docs/capturas/oscuro.png" width="230" /> | <img src="docs/capturas/widget.png" width="230" /> |
 
-<sub>Tema Sistema/Claro/Oscuro configurable desde Ajustes, y widget «Próximo cupón» en la pantalla de inicio.</sub>
+<sub>Identidad rediseñada: logo vectorial de ticket (el mismo del AppIcon), tema Sistema/Claro/Oscuro y widget «Próximo cupón».</sub>
 
 </div>
 
@@ -152,6 +154,7 @@ firebase deploy --only firestore:rules,storage
 - [x] Avatares personalizables (20 emojis + pingu clásico 🐧)
 - [x] Widget «Próximo cupón» (WidgetKit + App Group)
 - [x] Reglas de seguridad de Firestore/Storage por usuario (en el repo; falta desplegar + App Check)
+- [x] Rediseño de identidad: logo vectorial + AppIcon nuevos, bienvenida animada y login/registro de marca
 - [ ] Push remota (APNs/FCM) con la app cerrada — requiere Cloud Functions y clave APNs
 
 ---
