@@ -49,15 +49,30 @@ struct CouponFormScreen: View {
         !title.trimmingCharacters(in: .whitespaces).isEmpty && !isSaving
     }
 
+    /// El ticket tal y como quedará: se pinta arriba y se refresca al escribir.
+    private var previewCoupon: Coupon {
+        Coupon(title: title.isEmpty ? "Tu cupón" : title,
+               category: category.rawValue,
+               description: longDescription,
+               shortDescription: shortDescription.isEmpty
+                   ? "Así se verá en tu talonario." : shortDescription,
+               imageName: imageName,
+               cooldownTime: cooldown,
+               redeemLimit: redeemLimit)
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                if !isEditing {
-                    BrandBanner(
-                        title: "Nuevo cupón",
-                        subtitle: giftToPartner
-                            ? "Un regalo para \(auth.partnerName ?? "tu pareja")"
-                            : "Regala un momento")
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("VISTA PREVIA")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(CuponColors.subtleText)
+                        .padding(.leading, 6)
+
+                    CouponCard(coupon: previewCoupon, previewImage: customPhoto)
+                        .allowsHitTesting(false)
+                        .animation(.snappy, value: imageName)
                 }
 
                 if let partnerName = auth.partnerName, !isEditing {
@@ -150,7 +165,7 @@ struct CouponFormScreen: View {
         }
         .background(CuponColors.background)
         .scrollDismissesKeyboard(.interactively)
-        .navigationTitle(isEditing ? "Editar cupón" : "")
+        .navigationTitle(isEditing ? "Editar cupón" : "Nuevo cupón")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if isEditing {

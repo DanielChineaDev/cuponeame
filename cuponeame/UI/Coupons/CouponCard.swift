@@ -4,6 +4,8 @@ import SwiftUI
 /// laterales (la forma de la marca) y talón inferior con los datos.
 struct CouponCard: View {
     let coupon: Coupon
+    /// Imagen local para la vista previa del formulario (foto aún sin subir).
+    var previewImage: UIImage?
     @Environment(CouponStore.self) private var store
 
     private static let photoHeight: CGFloat = 150
@@ -24,7 +26,15 @@ struct CouponCard: View {
     // MARK: - Foto
 
     private var photo: some View {
-        CouponImageView(path: coupon.imageName)
+        Group {
+            if let previewImage {
+                Image(uiImage: previewImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                CouponImageView(path: coupon.imageName)
+            }
+        }
             .grayscale(coupon.isExhausted ? 1 : 0)
             .frame(height: Self.photoHeight)
             .frame(maxWidth: .infinity)
@@ -119,6 +129,7 @@ struct CouponCard: View {
 /// Línea discontinua de perforación a la altura de las muescas.
 struct TicketPerforation: View {
     let y: CGFloat
+    var tint = CuponColors.subtleText.opacity(0.35)
 
     var body: some View {
         GeometryReader { proxy in
@@ -126,8 +137,7 @@ struct TicketPerforation: View {
                 path.move(to: CGPoint(x: 18, y: y))
                 path.addLine(to: CGPoint(x: proxy.size.width - 18, y: y))
             }
-            .stroke(CuponColors.subtleText.opacity(0.35),
-                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+            .stroke(tint, style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
         }
         .allowsHitTesting(false)
     }
