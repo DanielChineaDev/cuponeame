@@ -168,6 +168,7 @@ struct CouponDetailScreen: View {
         .clipShape(PunchedTicketShape(notchY: Self.photoHeight, cornerRadius: 24, notchRadius: 12),
                    style: FillStyle(eoFill: true))
         .overlay(TicketPerforation(y: Self.photoHeight))
+        .compositingGroup()
         .shadow(color: .black.opacity(0.12), radius: 10, y: 5)
     }
 
@@ -186,7 +187,7 @@ struct CouponDetailScreen: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(.black.opacity(0.55), in: Capsule())
+            .cuponGlassCapsuleTinted(.black.opacity(0.45))
     }
 
     private func usesBadge(for coupon: Coupon) -> some View {
@@ -196,7 +197,7 @@ struct CouponDetailScreen: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(.black.opacity(0.55), in: Capsule())
+            .cuponGlassCapsuleTinted(.black.opacity(0.45))
     }
 
     private var dashedSeparator: some View {

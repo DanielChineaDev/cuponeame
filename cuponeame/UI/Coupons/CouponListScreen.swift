@@ -100,11 +100,16 @@ struct CouponListScreen: View {
             searchField
 
             if !store.coupons.isEmpty {
-                Label("\(store.coupons.filter { $0.canRedeem() }.count) de \(store.coupons.count) listos para canjear",
-                      systemImage: "ticket.fill")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.9))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack {
+                    Label("\(store.coupons.filter { $0.canRedeem() }.count) de \(store.coupons.count) listos para canjear",
+                          systemImage: "ticket.fill")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .cuponGlassCapsule()
+                    Spacer()
+                }
             }
         }
         .padding(16)
@@ -136,7 +141,7 @@ struct CouponListScreen: View {
         }
         .padding(.horizontal, 14)
         .frame(height: 48)
-        .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 14))
+        .cuponGlass(cornerRadius: 14)
     }
 
     private var filterChips: some View {

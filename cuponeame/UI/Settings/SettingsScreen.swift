@@ -96,7 +96,7 @@ struct SettingsScreen: View {
 
                 Section("Acerca de") {
                     LabeledContent("Versión", value: AppConfig.version)
-                    LabeledContent("Hecho con 💜 por", value: "BPO Studios")
+                    LabeledContent("Hecho por", value: "BPO Studios")
                 }
 
                 Section {
@@ -185,7 +185,7 @@ struct SettingsScreen: View {
                     stat(value: store.coupons.filter(\.favorite).count, label: "Favoritos", icon: "heart.fill")
                 }
                 .padding(.vertical, 10)
-                .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 16))
+                .cuponGlass(cornerRadius: 16)
             }
             .padding(18)
             .background(

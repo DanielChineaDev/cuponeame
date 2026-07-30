@@ -17,6 +17,7 @@ struct CouponCard: View {
         .clipShape(PunchedTicketShape(notchY: Self.photoHeight),
                    style: FillStyle(eoFill: true))
         .overlay(perforation)
+        .compositingGroup()
         .shadow(color: .black.opacity(0.12), radius: 10, y: 5)
     }
 
@@ -51,7 +52,7 @@ struct CouponCard: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(.black.opacity(0.55), in: Capsule())
+            .cuponGlassCapsuleTinted(.black.opacity(0.45))
     }
 
     private var favoriteButton: some View {
@@ -60,9 +61,9 @@ struct CouponCard: View {
         } label: {
             Image(systemName: coupon.favorite ? "heart.fill" : "heart")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(coupon.favorite ? CuponColors.brandPink : .black.opacity(0.7))
+                .foregroundStyle(coupon.favorite ? CuponColors.brandPink : .white)
                 .frame(width: 36, height: 36)
-                .background(.white.opacity(0.9), in: Circle())
+                .cuponGlassCircle()
         }
         .buttonStyle(.plain)
     }
