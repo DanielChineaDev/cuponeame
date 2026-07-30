@@ -50,67 +50,90 @@ struct CouponFormScreen: View {
     }
 
     var body: some View {
-        Form {
-            if let partnerName = auth.partnerName, !isEditing {
-                Section("Destinatario") {
-                    Picker("Para", selection: $giftToPartner) {
-                        Text("Para mí").tag(false)
-                        Text("Para \(partnerName) 💝").tag(true)
-                    }
-                    .pickerStyle(.segmented)
+        ScrollView {
+            VStack(spacing: 18) {
+                if !isEditing {
+                    BrandBanner(
+                        title: "Nuevo cupón",
+                        subtitle: giftToPartner
+                            ? "Un regalo para \(auth.partnerName ?? "tu pareja") 🎁"
+                            : "Regala un momento 💜")
                 }
-            }
 
-            Section("Cupón") {
-                TextField("Título", text: $title)
-                TextField("Descripción corta", text: $shortDescription)
-                TextField("Descripción", text: $longDescription, axis: .vertical)
-                    .lineLimit(3...6)
-            }
-
-            Section("Categoría") {
-                Picker("Categoría", selection: $category) {
-                    ForEach(CouponCategory.allCases) { option in
-                        Label(option.rawValue, systemImage: option.icon)
-                            .tag(option)
+                if let partnerName = auth.partnerName, !isEditing {
+                    SectionCard("Destinatario") {
+                        Picker("Para", selection: $giftToPartner) {
+                            Text("Para mí").tag(false)
+                            Text("Para \(partnerName) 💝").tag(true)
+                        }
+                        .pickerStyle(.segmented)
                     }
                 }
-            }
 
-            Section("Imagen") {
-                imageGallery
-                if store.isDemo {
-                    Label("Las fotos propias necesitan una cuenta", systemImage: "photo.on.rectangle.angled")
-                        .foregroundStyle(CuponColors.subtleText)
-                } else {
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        Label(customPhoto == nil ? "Usar una foto propia" : "Cambiar la foto propia",
-                              systemImage: "photo.on.rectangle.angled")
+                SectionCard("Cupón") {
+                    AuthField(icon: "textformat") {
+                        TextField("Título", text: $title)
+                    }
+                    AuthField(icon: "text.quote") {
+                        TextField("Descripción corta", text: $shortDescription)
+                    }
+                    AuthField(icon: "text.alignleft") {
+                        TextField("Descripción", text: $longDescription, axis: .vertical)
+                            .lineLimit(3...6)
                     }
                 }
-            }
 
-            Section("Reglas") {
-                Picker("Tiempo de espera", selection: $cooldown) {
-                    ForEach(Self.cooldownOptions, id: \.value) { option in
-                        Text(option.label).tag(option.value)
+                SectionCard("Categoría") {
+                    categoryChips
+                }
+
+                SectionCard("Imagen") {
+                    imageGallery
+                    if store.isDemo {
+                        Label("Las fotos propias necesitan una cuenta", systemImage: "photo.on.rectangle.angled")
+                            .foregroundStyle(CuponColors.subtleText)
+                    } else {
+                        PhotosPicker(selection: $photoItem, matching: .images) {
+                            Label(customPhoto == nil ? "Usar una foto propia" : "Cambiar la foto propia",
+                                  systemImage: "photo.on.rectangle.angled")
+                                .foregroundStyle(CuponColors.brandPurple)
+                        }
                     }
                 }
-                Stepper("Límite de canjes: \(redeemLimit)", value: $redeemLimit, in: 1...50)
-            }
 
-            if let saveError {
-                Section {
-                    Text(saveError).foregroundStyle(.red)
+                SectionCard("Reglas") {
+                    HStack {
+                        Label("Tiempo de espera", systemImage: "clock.fill")
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        Picker("", selection: $cooldown) {
+                            ForEach(Self.cooldownOptions, id: \.value) { option in
+                                Text(option.label).tag(option.value)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .tint(CuponColors.brandPurple)
+                    }
+
+                    Divider()
+
+                    Stepper(value: $redeemLimit, in: 1...50) {
+                        Label("Límite de canjes: **\(redeemLimit)**", systemImage: "checkmark.seal.fill")
+                    }
                 }
-            }
 
-            Section {
+                if let saveError {
+                    Label(saveError, systemImage: "exclamationmark.triangle.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 Button {
                     Task { await save() }
                 } label: {
                     if isSaving {
-                        ProgressView().frame(maxWidth: .infinity)
+                        ProgressView().tint(.white)
                     } else if isEditing {
                         Text("GUARDAR CAMBIOS")
                     } else if giftToPartner, let partnerName = auth.partnerName {
@@ -122,11 +145,13 @@ struct CouponFormScreen: View {
                 .buttonStyle(BrandButtonStyle())
                 .disabled(!canSave)
                 .opacity(canSave ? 1 : 0.6)
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets())
             }
+            .padding(16)
         }
-        .navigationTitle(isEditing ? "Editar cupón" : "Nuevo cupón")
+        .background(CuponColors.background)
+        .scrollDismissesKeyboard(.interactively)
+        .navigationTitle(isEditing ? "Editar cupón" : "")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if isEditing {
                 ToolbarItem(placement: .topBarLeading) {
@@ -146,6 +171,36 @@ struct CouponFormScreen: View {
         }
         .alert(savedMessage, isPresented: $showSaved) {
             Button("Genial") {}
+        }
+    }
+
+    // MARK: - Categoría
+
+    private var categoryChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(CouponCategory.allCases) { option in
+                    let selected = category == option
+                    Button {
+                        withAnimation(.snappy) { category = option }
+                    } label: {
+                        Label(option.rawValue, systemImage: option.icon)
+                            .font(.subheadline.weight(selected ? .semibold : .regular))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .foregroundStyle(selected ? .white : .primary)
+                            .background {
+                                if selected {
+                                    Capsule().fill(CuponColors.brandStroke)
+                                } else {
+                                    Capsule().fill(CuponColors.background)
+                                }
+                            }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.vertical, 2)
         }
     }
 

@@ -16,9 +16,7 @@ struct SettingsScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                profileHeader
-
-                summary
+                profileCard
 
                 Section("Pareja") {
                     NavigationLink {
@@ -149,59 +147,74 @@ struct SettingsScreen: View {
         }
     }
 
-    // MARK: - Cabecera y resumen
+    // MARK: - Carnet de perfil
 
-    private var profileHeader: some View {
+    private var profileCard: some View {
         Section {
-            HStack(spacing: 16) {
-                Button {
-                    showAvatarPicker = true
-                } label: {
-                    AvatarView(emoji: auth.avatar, size: 64)
-                        .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
-                        .overlay(alignment: .bottomTrailing) {
-                            Image(systemName: "pencil.circle.fill")
-                                .font(.system(size: 20))
-                                .foregroundStyle(.white, CuponColors.brandPurple)
-                        }
-                }
-                .buttonStyle(.plain)
+            VStack(spacing: 16) {
+                HStack(spacing: 16) {
+                    Button {
+                        showAvatarPicker = true
+                    } label: {
+                        AvatarView(emoji: auth.avatar, size: 72)
+                            .overlay(Circle().stroke(.white, lineWidth: 3))
+                            .overlay(alignment: .bottomTrailing) {
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.system(size: 22))
+                                    .foregroundStyle(CuponColors.brandPurple, .white)
+                            }
+                    }
+                    .buttonStyle(.plain)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(auth.userName ?? "…")
-                        .font(.title3.bold())
-                    Text(auth.isDemoMode ? "Modo demo · los cambios no se guardan" : auth.email)
-                        .font(.subheadline)
-                        .foregroundStyle(CuponColors.subtleText)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(auth.userName ?? "…")
+                            .font(.system(size: 24, weight: .heavy, design: .rounded))
+                            .foregroundStyle(.white)
+                        Text(auth.isDemoMode ? "Modo demo · los cambios no se guardan" : auth.email)
+                            .font(.subheadline)
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+                    Spacer()
                 }
+
+                HStack(spacing: 0) {
+                    stat(value: store.coupons.count, label: "Cupones", icon: "ticket.fill")
+                    statDivider
+                    stat(value: store.redemptions.count, label: "Canjes", icon: "checkmark.seal.fill")
+                    statDivider
+                    stat(value: store.coupons.filter(\.favorite).count, label: "Favoritos", icon: "heart.fill")
+                }
+                .padding(.vertical, 10)
+                .background(.white.opacity(0.14), in: RoundedRectangle(cornerRadius: 16))
             }
-            .padding(.vertical, 4)
+            .padding(18)
+            .background(
+                LinearGradient(colors: [CuponColors.brandPurple, CuponColors.brandPink],
+                               startPoint: .topLeading, endPoint: .bottomTrailing),
+                in: RoundedRectangle(cornerRadius: 24))
         }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
     }
 
-    private var summary: some View {
-        Section {
-            HStack(spacing: 0) {
-                stat(value: store.coupons.count, label: "Cupones", icon: "ticket.fill")
-                Divider()
-                stat(value: store.redemptions.count, label: "Canjes", icon: "checkmark.seal.fill")
-                Divider()
-                stat(value: store.coupons.filter(\.favorite).count, label: "Favoritos", icon: "heart.fill")
-            }
-            .padding(.vertical, 4)
-        }
+    private var statDivider: some View {
+        Rectangle()
+            .fill(.white.opacity(0.3))
+            .frame(width: 1, height: 36)
     }
 
     private func stat(value: Int, label: String, icon: String) -> some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
-                .foregroundStyle(CuponColors.brandPink)
+                .font(.footnote)
+                .foregroundStyle(.white.opacity(0.9))
             Text("\(value)")
                 .font(.title3.bold())
                 .monospacedDigit()
+                .foregroundStyle(.white)
             Text(label)
                 .font(.caption)
-                .foregroundStyle(CuponColors.subtleText)
+                .foregroundStyle(.white.opacity(0.85))
         }
         .frame(maxWidth: .infinity)
     }

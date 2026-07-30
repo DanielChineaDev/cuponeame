@@ -36,6 +36,7 @@
 		8CE6F964374D099F705948EE /* RegisterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB008774A016E4DBEAFF175B /* RegisterSheet.swift */; };
 		91E4CE6A3D47FCB4184E1D4A /* DefaultCoupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F8361D40B5CF388F6A54A7 /* DefaultCoupons.swift */; };
 		949D3E5A987D16645D5899FD /* CouponListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC41F16556D0B44595C5FEC /* CouponListScreen.swift */; };
+		BB8B435A0E99457102C04E06 /* BrandForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41C6935FA9248314853F146 /* BrandForm.swift */; };
 		BCD2B200AF8D96BCCBB6D05A /* Coupon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */; };
 		C15DBA18782FEAB15E0A580D /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEDCE732AD977C8F4B8CD96 /* WelcomeScreen.swift */; };
 		C993E39E312076A54353F031 /* CouponStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD24DC3A579E08F21EE65EF /* CouponStore.swift */; };
@@ -126,6 +127,7 @@
 		CBD24DC3A579E08F21EE65EF /* CouponStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponStore.swift; sourceTree = "<group>"; };
 		CD6CDF85E9AC6AFE3CF8FEE0 /* AuthStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStyle.swift; sourceTree = "<group>"; };
 		D2E7A270EE58160D7C48B6DC /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
+		D41C6935FA9248314853F146 /* BrandForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandForm.swift; sourceTree = "<group>"; };
 		D5CCF887163FD6570F2225A4 /* CuponeameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuponeameApp.swift; sourceTree = "<group>"; };
 		DB0D74A13B930A919375FD3E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		DB2FB45F633AE715660EBF99 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				73917093D99362FC93F7AAFA /* AvatarView.swift */,
+				D41C6935FA9248314853F146 /* BrandForm.swift */,
 				8560EAFD4623D38D402BD303 /* BrandLogo.swift */,
 				7F73E7AFC153A1829E2BAD45 /* CouponImageView.swift */,
 			);
@@ -505,6 +508,7 @@
 				2F2CE6A635F03E8A1D941FE2 /* AuthService.swift in Sources */,
 				E3D663A761356485F3DB8221 /* AuthStyle.swift in Sources */,
 				59981C114092FBBAD57EA7EE /* AvatarView.swift in Sources */,
+				BB8B435A0E99457102C04E06 /* BrandForm.swift in Sources */,
 				77EC2B141490BBF6143532AE /* BrandLogo.swift in Sources */,
 				BCD2B200AF8D96BCCBB6D05A /* Coupon.swift in Sources */,
 				DC279F4DC1222168B74A2801 /* CouponCard.swift in Sources */,

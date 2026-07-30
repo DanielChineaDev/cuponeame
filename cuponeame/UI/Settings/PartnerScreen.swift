@@ -48,10 +48,9 @@ struct PartnerScreen: View {
     @ViewBuilder
     private var unlinkedContent: some View {
         Section {
-            VStack(spacing: 12) {
-                Image(systemName: "heart.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(CuponColors.brandStroke)
+            VStack(spacing: 14) {
+                BrandMark(width: 130)
+                    .padding(.bottom, 6)
                 Text("Vincula tu cuenta con la de tu pareja para regalaros cupones el uno al otro.")
                     .multilineTextAlignment(.center)
                     .font(.callout)
@@ -144,9 +143,8 @@ struct PartnerScreen: View {
     private func linkedContent(partner: String) -> some View {
         Section {
             VStack(spacing: 12) {
-                Image(systemName: "heart.circle.fill")
-                    .font(.system(size: 56))
-                    .foregroundStyle(CuponColors.brandStroke)
+                BrandMark(width: 130)
+                    .padding(.bottom, 6)
                 Text("Vinculado con **\(partner)** 💜")
                     .font(.title3)
                 Text("Crea un cupón en la pestaña Crear y elige \"Para \(partner)\" para regalárselo, o usa \"Regalar\" en el detalle de cualquier cupón.")

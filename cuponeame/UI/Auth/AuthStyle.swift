@@ -41,7 +41,7 @@ struct AuthField<Field: View>: View {
     @ViewBuilder var field: Field
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
             Image(systemName: icon)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(CuponColors.brandPurple)
@@ -49,7 +49,8 @@ struct AuthField<Field: View>: View {
             field
         }
         .padding(.horizontal, 16)
-        .frame(height: 54)
+        .padding(.vertical, 16)
+        .frame(minHeight: 54)
         .background(CuponColors.surface, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)

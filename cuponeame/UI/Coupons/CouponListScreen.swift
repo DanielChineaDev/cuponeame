@@ -32,59 +32,86 @@ struct CouponListScreen: View {
 
     var body: some View {
         NavigationStack {
-            Group {
-                if store.coupons.isEmpty {
-                    emptyState
-                } else {
-                    couponList
+            ScrollView {
+                VStack(spacing: 16) {
+                    header
+
+                    if store.coupons.isEmpty {
+                        emptyState
+                            .padding(.top, 40)
+                    } else {
+                        searchField
+                        filterChips
+
+                        LazyVStack(spacing: 20) {
+                            ForEach(filtered) { coupon in
+                                NavigationLink(value: coupon.id) {
+                                    CouponCard(coupon: coupon)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+
+                        if filtered.isEmpty {
+                            Group {
+                                if searchText.isEmpty {
+                                    ContentUnavailableView(
+                                        "Nada por aquí",
+                                        systemImage: "ticket",
+                                        description: Text("No hay cupones con este filtro."))
+                                } else {
+                                    ContentUnavailableView.search(text: searchText)
+                                }
+                            }
+                            .padding(.top, 60)
+                        }
+                    }
                 }
+                .padding()
             }
             .background(CuponColors.background)
-            .navigationTitle("Cupones")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    userBadge
-                }
-            }
+            .scrollDismissesKeyboard(.interactively)
+            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 CouponDetailScreen(couponID: id)
             }
         }
     }
 
-    // MARK: - Lista
+    // MARK: - Cabecera
 
-    private var couponList: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                filterChips
-
-                LazyVStack(spacing: 20) {
-                    ForEach(filtered) { coupon in
-                        NavigationLink(value: coupon.id) {
-                            CouponCard(coupon: coupon)
-                        }
-                        .buttonStyle(.plain)
-                    }
+    private var header: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                if let name = auth.userName, !name.isEmpty {
+                    Text("Hola, \(name) 👋")
+                        .font(.subheadline)
+                        .foregroundStyle(CuponColors.subtleText)
                 }
+                Text("Cupones")
+                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+            }
+            Spacer()
+            AvatarView(emoji: auth.avatar, size: 44)
+                .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+        }
+        .padding(.top, 4)
+    }
 
-                if filtered.isEmpty {
-                    Group {
-                        if searchText.isEmpty {
-                            ContentUnavailableView(
-                                "Nada por aquí",
-                                systemImage: "ticket",
-                                description: Text("No hay cupones con este filtro."))
-                        } else {
-                            ContentUnavailableView.search(text: searchText)
-                        }
-                    }
-                    .padding(.top, 60)
+    private var searchField: some View {
+        AuthField(icon: "magnifyingglass") {
+            TextField("Buscar cupón", text: $searchText)
+                .autocorrectionDisabled()
+
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(CuponColors.subtleText)
                 }
             }
-            .padding()
         }
-        .searchable(text: $searchText, prompt: "Buscar cupón")
     }
 
     private var filterChips: some View {
@@ -120,26 +147,24 @@ struct CouponListScreen: View {
 
     // MARK: - Extras
 
-    private var userBadge: some View {
-        HStack(spacing: 8) {
-            Text(auth.userName ?? "")
-                .font(.subheadline)
-            AvatarView(emoji: auth.avatar, size: 32)
-        }
-    }
-
     private var emptyState: some View {
         VStack(spacing: 16) {
-            ContentUnavailableView(
-                "Sin cupones todavía",
-                systemImage: "ticket",
-                description: Text("Crea tu primer cupón en la pestaña Crear o empieza con el pack de ejemplo."))
+            BrandMark(width: 150)
+                .padding(.bottom, 12)
+
+            Text("Sin cupones todavía")
+                .font(.title3.bold())
+            Text("Crea tu primer cupón en la pestaña Crear\no empieza con el pack de ejemplo.")
+                .font(.subheadline)
+                .foregroundStyle(CuponColors.subtleText)
+                .multilineTextAlignment(.center)
 
             Button("Añadir pack de ejemplo") {
                 Task { await store.addDefaultPack() }
             }
             .buttonStyle(BrandButtonStyle())
             .frame(maxWidth: 280)
+            .padding(.top, 8)
         }
     }
 }

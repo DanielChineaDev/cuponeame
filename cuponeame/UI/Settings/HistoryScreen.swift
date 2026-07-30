@@ -17,12 +17,31 @@ struct HistoryScreen: View {
     var body: some View {
         Group {
             if store.redemptions.isEmpty {
-                ContentUnavailableView(
-                    "Sin canjes todavía",
-                    systemImage: "clock.arrow.circlepath",
-                    description: Text("Cuando canjees un cupón aparecerá aquí."))
+                VStack(spacing: 14) {
+                    BrandMark(width: 130)
+                        .padding(.bottom, 10)
+                    Text("Sin canjes todavía")
+                        .font(.title3.bold())
+                    Text("Cuando canjees un cupón aparecerá aquí.")
+                        .font(.subheadline)
+                        .foregroundStyle(CuponColors.subtleText)
+                }
             } else {
                 List {
+                    Section {
+                        Label("**\(store.redemptions.count)** momentos canjeados 💜",
+                              systemImage: "checkmark.seal.fill")
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(16)
+                            .background(
+                                LinearGradient(colors: [CuponColors.brandPurple, CuponColors.brandPink],
+                                               startPoint: .topLeading, endPoint: .bottomTrailing),
+                                in: RoundedRectangle(cornerRadius: 20))
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+
                     ForEach(grouped, id: \.day) { group in
                         Section(Self.dayTitle(for: group.day)) {
                             ForEach(group.items) { redemption in
