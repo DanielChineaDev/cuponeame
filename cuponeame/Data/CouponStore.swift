@@ -21,6 +21,8 @@ final class CouponStore {
     private var uid: String?
     /// IDs ya vistos: los cupones nuevos con `from` que no estén aquí son regalos.
     private var knownCouponIDs: Set<String>?
+    /// Último snapshot publicado al widget, para no repintar sin cambios.
+    private var lastWidgetSnapshot: WidgetSnapshot?
     private var couponsListener: ListenerRegistration?
     private var redemptionsListener: ListenerRegistration?
     private var db: Firestore { Firestore.firestore() }
@@ -40,6 +42,8 @@ final class CouponStore {
     }
 
     /// Deja en el App Group lo que el widget necesita y recarga sus timelines.
+    /// Solo publica si algo relevante cambió: el listener refresca a menudo y
+    /// no tiene sentido repintar el widget cada vez.
     private func publishWidgetSnapshot() {
         let available = coupons.filter { $0.canRedeem() }
         let next = available.first.map {
@@ -49,8 +53,16 @@ final class CouponStore {
                 categoryIcon: $0.categoryIcon,
                 remainingUses: max(0, $0.redeemLimit - $0.redeemCount))
         }
-        WidgetSnapshot(updated: Date(), total: coupons.count,
-                       available: available.count, next: next).save()
+        let snapshot = WidgetSnapshot(updated: Date(), total: coupons.count,
+                                      available: available.count, next: next)
+        if let last = lastWidgetSnapshot,
+           last.total == snapshot.total,
+           last.available == snapshot.available,
+           last.next == snapshot.next {
+            return
+        }
+        lastWidgetSnapshot = snapshot
+        snapshot.save()
         WidgetCenter.shared.reloadAllTimelines()
     }
 
