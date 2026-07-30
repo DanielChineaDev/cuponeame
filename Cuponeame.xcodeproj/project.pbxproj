@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		161263598FD261B4E04A3A84 /* PartnerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */; };
+		1AD042D33133537DEE1DCAB5 /* InviteCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA7D24BC1B89F99F85D5BB /* InviteCode.swift */; };
 		1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B76E6044523884B7E12658 /* RootView.swift */; };
 		1F94D04831F1167D010F9D14 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F01293DABC2D4E0ECAFEA2F /* FirebaseFirestore */; };
 		24DB3624FECD637285398294 /* HistoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */; };
@@ -36,6 +38,7 @@
 		D245074063EAE927501399BF /* LoginSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF557DD92859DD0A6C3F5DF /* LoginSheet.swift */; };
 		DB1506D1CA58296C0806F75F /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DDD73DF983CD4B6A77B4BC /* ImageService.swift */; };
 		DC279F4DC1222168B74A2801 /* CouponCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830EB05F5FF68661951E8AA9 /* CouponCard.swift */; };
+		E4445CBC1EF4125631AEB086 /* PartnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBAA82BEC894EC8B65B3EA6 /* PartnerTests.swift */; };
 		FB9E92D542908A7440B44DA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C76B8DDA449CE1D471D676 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -77,15 +80,18 @@
 		7BEDCE732AD977C8F4B8CD96 /* WelcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
 		7F73E7AFC153A1829E2BAD45 /* CouponImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponImageView.swift; sourceTree = "<group>"; };
 		830EB05F5FF68661951E8AA9 /* CouponCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponCard.swift; sourceTree = "<group>"; };
+		98FA7D24BC1B89F99F85D5BB /* InviteCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteCode.swift; sourceTree = "<group>"; };
 		9C454BA5FA164EB37DD4DA2C /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
 		9CF557DD92859DD0A6C3F5DF /* LoginSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSheet.swift; sourceTree = "<group>"; };
 		9D690655EB5330A7B45B9249 /* CouponTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponTests.swift; sourceTree = "<group>"; };
+		A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerScreen.swift; sourceTree = "<group>"; };
 		AD8B2E5114DF596DE537FD83 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		BB008774A016E4DBEAFF175B /* RegisterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterSheet.swift; sourceTree = "<group>"; };
 		CBD24DC3A579E08F21EE65EF /* CouponStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponStore.swift; sourceTree = "<group>"; };
 		D5CCF887163FD6570F2225A4 /* CuponeameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuponeameApp.swift; sourceTree = "<group>"; };
 		DB0D74A13B930A919375FD3E /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		DB2FB45F633AE715660EBF99 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DFBAA82BEC894EC8B65B3EA6 /* PartnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerTests.swift; sourceTree = "<group>"; };
 		E3B76E6044523884B7E12658 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -142,6 +148,7 @@
 			children = (
 				3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */,
 				14F8361D40B5CF388F6A54A7 /* DefaultCoupons.swift */,
+				98FA7D24BC1B89F99F85D5BB /* InviteCode.swift */,
 				164D43380280584DD9294A95 /* Redemption.swift */,
 			);
 			path = Models;
@@ -188,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */,
+				A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */,
 				9C454BA5FA164EB37DD4DA2C /* SettingsScreen.swift */,
 			);
 			path = Settings;
@@ -260,6 +268,7 @@
 			children = (
 				4E190CF51F0B946852024475 /* CouponStoreDemoTests.swift */,
 				9D690655EB5330A7B45B9249 /* CouponTests.swift */,
+				DFBAA82BEC894EC8B65B3EA6 /* PartnerTests.swift */,
 			);
 			path = cuponeameTests;
 			sourceTree = "<group>";
@@ -425,7 +434,9 @@
 				5E4ED441D4E0DC98672ACC53 /* Glass.swift in Sources */,
 				24DB3624FECD637285398294 /* HistoryScreen.swift in Sources */,
 				DB1506D1CA58296C0806F75F /* ImageService.swift in Sources */,
+				1AD042D33133537DEE1DCAB5 /* InviteCode.swift in Sources */,
 				D245074063EAE927501399BF /* LoginSheet.swift in Sources */,
+				161263598FD261B4E04A3A84 /* PartnerScreen.swift in Sources */,
 				4E8968B3816E7C4ECC3545EF /* Redemption.swift in Sources */,
 				8CE6F964374D099F705948EE /* RegisterSheet.swift in Sources */,
 				1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */,
@@ -450,6 +461,7 @@
 			files = (
 				551AE445344491F0200A1EEF /* CouponStoreDemoTests.swift in Sources */,
 				D147D1DD3F9057923805261F /* CouponTests.swift in Sources */,
+				E4445CBC1EF4125631AEB086 /* PartnerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
