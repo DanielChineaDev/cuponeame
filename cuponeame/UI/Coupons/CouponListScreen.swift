@@ -40,7 +40,6 @@ struct CouponListScreen: View {
                         emptyState
                             .padding(.top, 40)
                     } else {
-                        searchField
                         filterChips
 
                         LazyVStack(spacing: 20) {
@@ -81,26 +80,49 @@ struct CouponListScreen: View {
     // MARK: - Cabecera
 
     private var header: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                if let name = auth.userName, !name.isEmpty {
-                    Text("Hola, \(name) 👋")
-                        .font(.subheadline)
-                        .foregroundStyle(CuponColors.subtleText)
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
+                    if let name = auth.userName, !name.isEmpty {
+                        Label("Hola, \(name)", systemImage: "hand.wave.fill")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+                    Text("Cupones")
+                        .font(.system(size: 32, weight: .heavy, design: .rounded))
+                        .foregroundStyle(.white)
                 }
-                Text("Cupones")
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                Spacer()
+                AvatarView(emoji: auth.avatar, size: 46)
+                    .overlay(Circle().stroke(.white, lineWidth: 2))
             }
-            Spacer()
-            AvatarView(emoji: auth.avatar, size: 44)
-                .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+
+            searchField
+
+            if !store.coupons.isEmpty {
+                Label("\(store.coupons.filter { $0.canRedeem() }.count) de \(store.coupons.count) listos para canjear",
+                      systemImage: "ticket.fill")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
-        .padding(.top, 4)
+        .padding(16)
+        .background(
+            LinearGradient(colors: [CuponColors.brandPurple, CuponColors.brandPink],
+                           startPoint: .topLeading, endPoint: .bottomTrailing),
+            in: RoundedRectangle(cornerRadius: 24))
     }
 
     private var searchField: some View {
-        AuthField(icon: "magnifyingglass") {
-            TextField("Buscar cupón", text: $searchText)
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.white.opacity(0.9))
+
+            TextField("", text: $searchText,
+                      prompt: Text("Buscar cupón").foregroundStyle(.white.opacity(0.7)))
+                .foregroundStyle(.white)
+                .tint(.white)
                 .autocorrectionDisabled()
 
             if !searchText.isEmpty {
@@ -108,10 +130,13 @@ struct CouponListScreen: View {
                     searchText = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(CuponColors.subtleText)
+                        .foregroundStyle(.white.opacity(0.8))
                 }
             }
         }
+        .padding(.horizontal, 14)
+        .frame(height: 48)
+        .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 14))
     }
 
     private var filterChips: some View {
