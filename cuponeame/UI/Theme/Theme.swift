@@ -54,6 +54,31 @@ extension UIColor {
     }
 }
 
+// MARK: - Apariencia
+
+/// Tema elegido en Ajustes (persistido en @AppStorage("appTheme")).
+enum AppTheme: String, CaseIterable, Identifiable {
+    case system, light, dark
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .system: "Sistema"
+        case .light: "Claro"
+        case .dark: "Oscuro"
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
+        }
+    }
+}
+
 // MARK: - Estilos de la marca
 
 /// Botón principal: cápsula con el gradiente morado→rosa.

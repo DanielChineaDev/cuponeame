@@ -10,6 +10,7 @@ import FirebaseCore
 struct CuponeameApp: App {
     @State private var auth: AuthService
     @State private var store: CouponStore
+    @AppStorage("appTheme") private var themeRaw = AppTheme.system.rawValue
 
     init() {
         // Antes de crear los stores: AuthService toca Auth.auth() en su init.
@@ -24,6 +25,7 @@ struct CuponeameApp: App {
                 .environment(auth)
                 .environment(store)
                 .tint(CuponColors.brandPurple)
+                .preferredColorScheme(AppTheme(rawValue: themeRaw)?.colorScheme)
         }
     }
 }

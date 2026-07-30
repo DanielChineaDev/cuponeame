@@ -4,22 +4,54 @@ struct SettingsScreen: View {
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
 
+    @AppStorage("appTheme") private var themeRaw = AppTheme.system.rawValue
+
     @State private var showNameEditor = false
     @State private var newName = ""
     @State private var showDeleteConfirmation = false
     @State private var showPackConfirmation = false
+    @State private var passwordResetSent = false
 
     var body: some View {
         NavigationStack {
             Form {
                 profileHeader
 
-                Section("Perfil") {
+                summary
+
+                Section("Pareja") {
+                    NavigationLink {
+                        PartnerScreen()
+                    } label: {
+                        if let partner = auth.partnerName {
+                            Label("Vinculado con \(partner)", systemImage: "heart.circle.fill")
+                                .foregroundStyle(CuponColors.brandPink)
+                        } else {
+                            Label("Modo pareja · invita a tu persona", systemImage: "heart.circle")
+                        }
+                    }
+                }
+
+                Section {
                     Button {
                         newName = auth.userName ?? ""
                         showNameEditor = true
                     } label: {
                         Label("Cambiar nombre", systemImage: "pencil")
+                    }
+
+                    if !auth.isDemoMode {
+                        Button {
+                            Task { passwordResetSent = await auth.resetPassword(email: auth.email) }
+                        } label: {
+                            Label("Cambiar contraseña", systemImage: "key.fill")
+                        }
+                    }
+                } header: {
+                    Text("Perfil")
+                } footer: {
+                    if passwordResetSent {
+                        Text("Te hemos enviado un correo para cambiar la contraseña. ✉️")
                     }
                 }
 
@@ -42,6 +74,25 @@ struct SettingsScreen: View {
                     Text("Cupones")
                 } footer: {
                     Text("Añade de nuevo los \(DefaultCoupons.all.count) cupones con los que estrena la app.")
+                }
+
+                Section("Apariencia") {
+                    Picker(selection: $themeRaw) {
+                        ForEach(AppTheme.allCases) { theme in
+                            Text(theme.label).tag(theme.rawValue)
+                        }
+                    } label: {
+                        Label("Tema", systemImage: "circle.lefthalf.filled")
+                    }
+                }
+
+                Section("Comparte el amor") {
+                    ShareLink(item: "🎟️ Cuponéame — cupones para regalar momentos a quien más quieres. Hecho con 💜 por BPO Studios.") {
+                        Label("Compartir Cuponéame", systemImage: "square.and.arrow.up")
+                    }
+                    Link(destination: URL(string: "mailto:l3lueart@gmail.com?subject=Sugerencia%20Cupon%C3%A9ame")!) {
+                        Label("Enviar una sugerencia", systemImage: "envelope.fill")
+                    }
                 }
 
                 Section("Acerca de") {
@@ -94,6 +145,8 @@ struct SettingsScreen: View {
         }
     }
 
+    // MARK: - Cabecera y resumen
+
     private var profileHeader: some View {
         Section {
             HStack(spacing: 16) {
@@ -114,5 +167,32 @@ struct SettingsScreen: View {
             }
             .padding(.vertical, 4)
         }
+    }
+
+    private var summary: some View {
+        Section {
+            HStack(spacing: 0) {
+                stat(value: store.coupons.count, label: "Cupones", icon: "ticket.fill")
+                Divider()
+                stat(value: store.redemptions.count, label: "Canjes", icon: "checkmark.seal.fill")
+                Divider()
+                stat(value: store.coupons.filter(\.favorite).count, label: "Favoritos", icon: "heart.fill")
+            }
+            .padding(.vertical, 4)
+        }
+    }
+
+    private func stat(value: Int, label: String, icon: String) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .foregroundStyle(CuponColors.brandPink)
+            Text("\(value)")
+                .font(.title3.bold())
+                .monospacedDigit()
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(CuponColors.subtleText)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
