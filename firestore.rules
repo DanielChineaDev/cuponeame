@@ -1,0 +1,47 @@
+rules_version = '2';
+
+// Reglas de Cuponéame. Desplegar con: firebase deploy --only firestore:rules
+//
+// Modelo: cada usuario es dueño de users/{uid} y sus subcolecciones; el modo
+// pareja necesita dos excepciones acotadas (vincular/desvincular y regalar).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, create, delete: if isOwner(uid);
+      // El dueño edita su perfil; cualquier usuario autenticado solo puede
+      // tocar los campos del vínculo de pareja (canjear una invitación
+      // escribe en el perfil del que invitó, y desvincular lo limpia).
+      allow update: if isOwner(uid)
+        || (signedIn() && request.resource.data.diff(resource.data)
+              .affectedKeys().hasOnly(['partnerUID', 'partnerName']));
+
+      match /coupons/{couponID} {
+        allow read, update, delete: if isOwner(uid);
+        // El dueño crea los suyos; la pareja solo puede REGALAR: crear un
+        // cupón nuevo firmado con su nombre en `from`.
+        allow create: if isOwner(uid)
+          || (signedIn() && request.resource.data.from is string);
+      }
+
+      match /redemptions/{redemptionID} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    match /invites/{code} {
+      // Crear solo invitaciones propias; leer y consumir (borrar), cualquier
+      // usuario autenticado que tenga el código.
+      allow create: if signedIn() && request.resource.data.ownerUID == request.auth.uid;
+      allow read, delete: if signedIn();
+    }
+  }
+}

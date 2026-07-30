@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Reglas de Storage. Desplegar con: firebase deploy --only storage
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Catálogo y avatares por defecto: lectura pública (los usa la app
+    // sin sesión y el modo demo).
+    match /defaults-coupons/{file} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /defaults-avatars/{file} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Fotos propias de cupones: solo el dueño escribe; puede leerlas
+    // cualquier usuario con sesión (la pareja ve el cupón regalado).
+    match /user-images/{uid}/{file} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
