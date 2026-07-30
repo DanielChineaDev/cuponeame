@@ -10,6 +10,7 @@ struct SettingsScreen: View {
     @State private var newName = ""
     @State private var showDeleteConfirmation = false
     @State private var showPackConfirmation = false
+    @State private var showAvatarPicker = false
     @State private var passwordResetSent = false
 
     var body: some View {
@@ -119,6 +120,9 @@ struct SettingsScreen: View {
                 }
             }
             .navigationTitle("Ajustes")
+            .sheet(isPresented: $showAvatarPicker) {
+                AvatarPickerSheet()
+            }
             .alert("Cambiar nombre", isPresented: $showNameEditor) {
                 TextField("Nombre", text: $newName)
                 Button("Guardar") {
@@ -150,12 +154,18 @@ struct SettingsScreen: View {
     private var profileHeader: some View {
         Section {
             HStack(spacing: 16) {
-                Image("pingu-avatar")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 64, height: 64)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+                Button {
+                    showAvatarPicker = true
+                } label: {
+                    AvatarView(emoji: auth.avatar, size: 64)
+                        .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+                        .overlay(alignment: .bottomTrailing) {
+                            Image(systemName: "pencil.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundStyle(.white, CuponColors.brandPurple)
+                        }
+                }
+                .buttonStyle(.plain)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(auth.userName ?? "…")

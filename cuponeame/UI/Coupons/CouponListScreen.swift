@@ -124,11 +124,7 @@ struct CouponListScreen: View {
         HStack(spacing: 8) {
             Text(auth.userName ?? "")
                 .font(.subheadline)
-            Image("pingu-avatar")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 32, height: 32)
-                .clipShape(Circle())
+            AvatarView(emoji: auth.avatar, size: 32)
         }
     }
 
