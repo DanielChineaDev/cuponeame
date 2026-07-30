@@ -111,10 +111,19 @@ struct CouponCard: View {
     }
 
     private var perforation: some View {
+        TicketPerforation(y: Self.photoHeight)
+    }
+}
+
+/// Línea discontinua de perforación a la altura de las muescas.
+struct TicketPerforation: View {
+    let y: CGFloat
+
+    var body: some View {
         GeometryReader { proxy in
             Path { path in
-                path.move(to: CGPoint(x: 18, y: Self.photoHeight))
-                path.addLine(to: CGPoint(x: proxy.size.width - 18, y: Self.photoHeight))
+                path.move(to: CGPoint(x: 18, y: y))
+                path.addLine(to: CGPoint(x: proxy.size.width - 18, y: y))
             }
             .stroke(CuponColors.subtleText.opacity(0.35),
                     style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))

@@ -25,12 +25,17 @@ struct CouponDetailScreen: View {
     }
 
     private func content(for coupon: Coupon) -> some View {
-        VStack(spacing: 16) {
-            photoCard(for: coupon)
+        VStack(spacing: 0) {
+            ScrollView {
+                ticket(for: coupon)
+                    .padding(16)
+            }
+            .scrollBounceBehavior(.basedOnSize)
 
             redeemButton(for: coupon)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
         }
-        .padding(16)
         .background(CuponColors.background)
         .navigationTitle("Detalle de cupón")
         .navigationBarTitleDisplayMode(.inline)
@@ -108,51 +113,105 @@ struct CouponDetailScreen: View {
         }
     }
 
-    // MARK: - Foto con chips
+    // MARK: - Ticket
 
-    private func photoCard(for coupon: Coupon) -> some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top) {
+    private static let photoHeight: CGFloat = 260
+
+    private func ticket(for coupon: Coupon) -> some View {
+        VStack(spacing: 0) {
+            Color.clear
+                .frame(height: Self.photoHeight)
+                .frame(maxWidth: .infinity)
+                .overlay(
+                    CouponImageView(path: coupon.imageName)
+                        .grayscale(coupon.isExhausted ? 1 : 0))
+                .clipped()
+                .overlay(alignment: .topLeading) {
+                    statusChip(for: coupon).padding(12)
+                }
+                .overlay(alignment: .topTrailing) {
+                    usesBadge(for: coupon).padding(12)
+                }
+
+            VStack(alignment: .leading, spacing: 12) {
                 Text(coupon.title)
-                    .font(.title.bold())
-                    .chip()
+                    .font(.system(size: 26, weight: .heavy, design: .rounded))
 
-                Spacer()
+                HStack(spacing: 12) {
+                    Label(coupon.category, systemImage: coupon.categoryIcon)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(CuponColors.brandPurple)
 
-                Text("\(coupon.redeemCount)/\(coupon.redeemLimit)")
-                    .font(.headline)
-                    .chip()
+                    if let from = coupon.from {
+                        Label("De \(from)", systemImage: "gift.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(CuponColors.brandPink)
+                    }
+                }
+
+                let text = coupon.description.isEmpty ? coupon.shortDescription : coupon.description
+                if !text.isEmpty {
+                    Text(text)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                dashedSeparator
+                    .padding(.top, 4)
+
+                barcodeSticker(for: coupon)
             }
-
-            Label(coupon.category, systemImage: coupon.categoryIcon)
-                .font(.subheadline)
-                .chip()
-
-            if let from = coupon.from {
-                Label("De \(from) 💜", systemImage: "gift.fill")
-                    .font(.subheadline.bold())
-                    .chip()
-            }
-
-            Spacer()
-
-            Text(coupon.description)
-                .font(.callout)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .chip()
-
-            barcodeCard(for: coupon)
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(
-            CouponImageView(path: coupon.imageName)
-                .grayscale(coupon.isExhausted ? 1 : 0))
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
+        .background(CuponColors.surface)
+        .clipShape(PunchedTicketShape(notchY: Self.photoHeight, cornerRadius: 24, notchRadius: 12),
+                   style: FillStyle(eoFill: true))
+        .overlay(TicketPerforation(y: Self.photoHeight))
+        .shadow(color: .black.opacity(0.12), radius: 10, y: 5)
     }
 
-    private func barcodeCard(for coupon: Coupon) -> some View {
+    @ViewBuilder
+    private func statusChip(for coupon: Coupon) -> some View {
+        if coupon.isExhausted {
+            photoChip("Agotado", icon: "nosign")
+        } else if coupon.isOnCooldown() {
+            photoChip("En espera", icon: "clock.fill")
+        }
+    }
+
+    private func photoChip(_ text: String, icon: String) -> some View {
+        Label(text, systemImage: icon)
+            .font(.caption.bold())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(.black.opacity(0.55), in: Capsule())
+    }
+
+    private func usesBadge(for coupon: Coupon) -> some View {
+        Label("\(coupon.redeemCount)/\(coupon.redeemLimit)", systemImage: "checkmark.seal.fill")
+            .font(.subheadline.bold())
+            .monospacedDigit()
+            .foregroundStyle(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(.black.opacity(0.55), in: Capsule())
+    }
+
+    private var dashedSeparator: some View {
+        GeometryReader { proxy in
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: 0))
+                path.addLine(to: CGPoint(x: proxy.size.width, y: 0))
+            }
+            .stroke(CuponColors.subtleText.opacity(0.35),
+                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+        }
+        .frame(height: 1)
+    }
+
+    private func barcodeSticker(for coupon: Coupon) -> some View {
         VStack(spacing: 6) {
             Image("barcode")
                 .resizable()
@@ -160,13 +219,14 @@ struct CouponDetailScreen: View {
 
             Text(coupon.barcode)
                 .font(.callout.monospaced())
+                .foregroundStyle(.black)
         }
-        .padding(16)
+        .padding(12)
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .foregroundStyle(.black)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.2), radius: 5)
+        .background(.white, in: RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(CuponColors.subtleText.opacity(0.2), lineWidth: 1))
     }
 
     // MARK: - Canjeo
@@ -209,15 +269,5 @@ struct CouponDetailScreen: View {
         \(coupon.shortDescription)
         — Enviado con Cuponéame 💜
         """
-    }
-}
-
-private extension View {
-    func chip() -> some View {
-        self
-            .padding(8)
-            .background(Color.white.opacity(0.85))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .foregroundStyle(.black)
     }
 }
