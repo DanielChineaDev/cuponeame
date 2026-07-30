@@ -13,7 +13,7 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-0071E3?logo=swift&logoColor=white)
 ![Xcode](https://img.shields.io/badge/Xcode-26-1575F9?logo=xcode&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Backend-Firebase%2012-FFCA28?logo=firebase&logoColor=black)
-![Tests](https://img.shields.io/badge/tests-27%20%E2%9C%93-brightgreen)
+![Tests](https://img.shields.io/badge/tests-31%20%E2%9C%93-brightgreen)
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 
 </div>
@@ -32,11 +32,11 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 
 <sub>Gradiente morado→rosa + Liquid Glass + tarjetas foto-a-sangre: el lenguaje visual de Cuponéame.</sub>
 
-| Modo oscuro |
-|:---:|
-| <img src="docs/capturas/oscuro.png" width="230" /> |
+| Modo oscuro | Widget |
+|:---:|:---:|
+| <img src="docs/capturas/oscuro.png" width="230" /> | <img src="docs/capturas/widget.png" width="230" /> |
 
-<sub>Tema Sistema/Claro/Oscuro configurable desde Ajustes.</sub>
+<sub>Tema Sistema/Claro/Oscuro configurable desde Ajustes, y widget «Próximo cupón» en la pantalla de inicio.</sub>
 
 </div>
 
@@ -44,7 +44,9 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 
 ## ✨ Características
 
-- 💑 **Modo pareja**: vincula dos cuentas con un **código de invitación** (6 caracteres, compartible por cualquier app) y **regalaos cupones** el uno al otro — desde Crear ("Para X 💝") o desde el detalle ("Regalar a X"). Los regalos llegan firmados con el chip "De X".
+- 💑 **Modo pareja**: vincula dos cuentas con un **código de invitación** (6 caracteres, compartible por cualquier app) y **regalaos cupones** el uno al otro — desde Crear ("Para X 💝") o desde el detalle ("Regalar a X"). Los regalos llegan firmados con el chip "De X" y disparan el aviso **"💝 ¡Regalo de X!"** en vivo gracias a los listeners.
+- 🧩 **Widget** "Próximo cupón" (WidgetKit small/medium): el siguiente cupón canjeable y el contador de disponibles, alimentado por un snapshot en el App Group — sin tocar Firebase desde el widget.
+- 🧑‍🎨 **Avatares personalizables**: 20 emojis sobre gradiente de marca (o el pingu clásico), sincronizados en el perfil.
 - 🎟️ **Cupones canjeables** con foto a sangre, chips blancos y anillo de usos restantes.
 - ⏳ **Tiempo de espera real** entre canjeos, con cuenta atrás en vivo sobre el botón de canjear.
 - 🧮 **Límite de usos** por cupón; al agotarse, la tarjeta pasa a escala de grises.
@@ -110,7 +112,8 @@ cuponeame/
 | Contrato | Valor |
 |---|---|
 | Campos Firestore de cupón | `title`, `category`, `description`, `short_description`, `imageName`, `used`, `cooldownTime`, `cooldownExpirationDate`, `redeemCount`, `redeemLimit` (+ nuevos `favorite`, `createdAt`, `from`) |
-| Perfil `users/{uid}` | `name`, `email` (+ modo pareja: `partnerUID`, `partnerName`) |
+| Perfil `users/{uid}` | `name`, `email`, `avatar` (emoji) (+ modo pareja: `partnerUID`, `partnerName`) |
+| Widget | Snapshot JSON en App Group `group.com.bpo.cuponeame`, clave `widget-snapshot` |
 | Invitaciones | `invites/{code}` → `ownerUID`, `ownerName`, `createdAt`; el código se consume al vincular |
 | Rutas de imágenes del catálogo | `/defaults-coupons/*.jpg` (con espejo local en Assets) |
 | Fotos propias | `user-images/{uid}/{uuid}.jpg` en Storage |
@@ -128,7 +131,13 @@ xcodegen generate
 open Cuponeame.xcodeproj
 ```
 
-Los tests: esquema **Cuponeame** → ⌘U (27 tests: modelo, contrato Firestore, códigos de invitación y modo demo).
+Los tests: esquema **Cuponeame** → ⌘U (31 tests: modelo, contrato Firestore, códigos de invitación, snapshot del widget y modo demo).
+
+Las reglas de seguridad viven en el repo (`firestore.rules`, `storage.rules`); se despliegan con:
+
+```bash
+firebase deploy --only firestore:rules,storage
+```
 
 ---
 
@@ -139,10 +148,11 @@ Los tests: esquema **Cuponeame** → ⌘U (27 tests: modelo, contrato Firestore,
 - [x] Favoritos, filtros, buscador e historial
 - [x] Modo demo para probar la app sin cuenta
 - [x] **Modo pareja**: código de invitación, cuentas vinculadas y regalos de cupones
-- [ ] Notificación push cuando tu pareja canjea o te regala un cupón
-- [ ] Avatares personalizables (hoy: pingüino para todo el mundo 🐧)
-- [ ] Widget con el próximo cupón disponible
-- [ ] Reglas de seguridad de Firestore por usuario + App Check
+- [x] Aviso en vivo "💝 ¡Regalo de X!" al recibir un cupón (in-app, vía listeners)
+- [x] Avatares personalizables (20 emojis + pingu clásico 🐧)
+- [x] Widget «Próximo cupón» (WidgetKit + App Group)
+- [x] Reglas de seguridad de Firestore/Storage por usuario (en el repo; falta desplegar + App Check)
+- [ ] Push remota (APNs/FCM) con la app cerrada — requiere Cloud Functions y clave APNs
 
 ---
 
