@@ -23,6 +23,8 @@ enum PartnerError: Error {
 final class AuthService {
     private(set) var user: FirebaseAuth.User?
     private(set) var userName: String?
+    /// Emoji de avatar elegido; nil = pingu clásico.
+    private(set) var avatar: String?
     /// Modo pareja: uid y nombre de la persona vinculada.
     private(set) var partnerUID: String?
     private(set) var partnerName: String?
@@ -46,6 +48,7 @@ final class AuthService {
                 guard let self else { return }
                 self.user = user
                 self.userName = nil
+                self.avatar = nil
                 self.partnerUID = nil
                 self.partnerName = nil
                 self.profileListener?.remove()
@@ -63,6 +66,7 @@ final class AuthService {
                 MainActor.assumeIsolated {
                     guard let self, let data = snapshot?.data() else { return }
                     self.userName = data["name"] as? String ?? "Sin nombre"
+                    self.avatar = data["avatar"] as? String
                     self.partnerUID = data["partnerUID"] as? String
                     self.partnerName = data["partnerName"] as? String
                 }
@@ -103,6 +107,7 @@ final class AuthService {
     func enterDemo() {
         isDemoMode = true
         userName = "Invitado"
+        avatar = nil
         partnerUID = nil
         partnerName = nil
     }
@@ -111,6 +116,7 @@ final class AuthService {
         if isDemoMode {
             isDemoMode = false
             userName = nil
+            avatar = nil
             partnerUID = nil
             partnerName = nil
             return
@@ -158,6 +164,20 @@ final class AuthService {
         return await run {
             try await self.db.collection("users").document(uid)
                 .setData(["name": trimmed], merge: true)
+        }
+    }
+
+    /// Cambia el avatar (emoji) o vuelve al pingu clásico con nil.
+    @discardableResult
+    func updateAvatar(_ emoji: String?) async -> Bool {
+        if isDemoMode {
+            avatar = emoji
+            return true
+        }
+        guard let uid = user?.uid else { return false }
+        return await run {
+            try await self.db.collection("users").document(uid)
+                .setData(["avatar": emoji ?? FieldValue.delete()], merge: true)
         }
     }
 

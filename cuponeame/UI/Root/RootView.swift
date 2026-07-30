@@ -33,6 +33,8 @@ struct RootView: View {
 }
 
 struct MainTabs: View {
+    @Environment(CouponStore.self) private var store
+
     var body: some View {
         TabView {
             CouponListScreen()
@@ -43,6 +45,14 @@ struct MainTabs: View {
 
             SettingsScreen()
                 .tabItem { Label("Ajustes", systemImage: "gearshape.fill") }
+        }
+        .alert("💝 ¡Regalo de \(store.incomingGift?.from ?? "tu pareja")!",
+               isPresented: Binding(
+                   get: { store.incomingGift != nil },
+                   set: { if !$0 { store.incomingGift = nil } })) {
+            Button("Genial") { store.incomingGift = nil }
+        } message: {
+            Text("Te ha enviado «\(store.incomingGift?.title ?? "un cupón")». Ya está en tu talonario.")
         }
     }
 }

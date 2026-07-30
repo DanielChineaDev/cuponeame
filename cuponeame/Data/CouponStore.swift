@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import WidgetKit
 
 /// Estado en vivo de los cupones y el historial del usuario conectado.
 /// Escucha `users/{uid}/coupons` y `users/{uid}/redemptions` con listeners de
@@ -7,13 +8,19 @@ import FirebaseFirestore
 @MainActor
 @Observable
 final class CouponStore {
-    private(set) var coupons: [Coupon] = []
+    private(set) var coupons: [Coupon] = [] {
+        didSet { publishWidgetSnapshot() }
+    }
     private(set) var redemptions: [Redemption] = []
     /// Modo demo: todo opera sobre datos locales, sin tocar Firestore.
     private(set) var isDemo = false
+    /// Último regalo recibido y aún no anunciado (dispara el aviso en la UI).
+    var incomingGift: Coupon?
     var errorMessage: String?
 
     private var uid: String?
+    /// IDs ya vistos: los cupones nuevos con `from` que no estén aquí son regalos.
+    private var knownCouponIDs: Set<String>?
     private var couponsListener: ListenerRegistration?
     private var redemptionsListener: ListenerRegistration?
     private var db: Firestore { Firestore.firestore() }
@@ -30,6 +37,21 @@ final class CouponStore {
 
     func coupon(id: String) -> Coupon? {
         coupons.first { $0.id == id }
+    }
+
+    /// Deja en el App Group lo que el widget necesita y recarga sus timelines.
+    private func publishWidgetSnapshot() {
+        let available = coupons.filter { $0.canRedeem() }
+        let next = available.first.map {
+            WidgetSnapshot.NextCoupon(
+                title: $0.title,
+                category: $0.category,
+                categoryIcon: $0.categoryIcon,
+                remainingUses: max(0, $0.redeemLimit - $0.redeemCount))
+        }
+        WidgetSnapshot(updated: Date(), total: coupons.count,
+                       available: available.count, next: next).save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     // MARK: - Listeners
@@ -49,9 +71,17 @@ final class CouponStore {
                 let loaded = snapshot?.documents.map { Coupon(id: $0.documentID, data: $0.data()) } ?? []
                 // Orden local: los antiguos no tienen `createdAt` y un order(by:)
                 // en el servidor los excluiría de la consulta.
-                self.coupons = loaded.sorted {
+                let sorted = loaded.sorted {
                     ($0.createdAt ?? .distantPast, $0.title) < ($1.createdAt ?? .distantPast, $1.title)
                 }
+                // El primer snapshot solo siembra los IDs; a partir de ahí,
+                // un cupón nuevo firmado con `from` es un regalo de la pareja.
+                if let known = self.knownCouponIDs,
+                   let gift = sorted.last(where: { $0.from != nil && !known.contains($0.id) }) {
+                    self.incomingGift = gift
+                }
+                self.knownCouponIDs = Set(sorted.map(\.id))
+                self.coupons = sorted
             }
         }
 
@@ -74,6 +104,8 @@ final class CouponStore {
         isDemo = false
         coupons = []
         redemptions = []
+        knownCouponIDs = nil
+        incomingGift = nil
     }
 
     // MARK: - Modo demo
@@ -101,6 +133,7 @@ final class CouponStore {
         seeded[10].used = true
         seeded[10].redeemCount = seeded[10].redeemLimit
         coupons = seeded
+        knownCouponIDs = Set(seeded.map(\.id))
 
         redemptions = [
             Redemption(id: "demo-r0", couponID: "demo-2", title: "Beso", category: "Romance",
@@ -214,7 +247,22 @@ final class CouponStore {
         gifted.cooldownExpirationDate = nil
         gifted.favorite = false
         gifted.createdAt = Date()
-        if isDemo { return true }
+        if isDemo {
+            // En demo, Pao devuelve el detalle a los pocos segundos 💜 (así se
+            // puede probar el aviso de regalo entrante sin segunda cuenta).
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(2))
+                guard let self, self.isDemo else { return }
+                var reply = DefaultCoupons.all.randomElement() ?? gifted
+                reply.id = "demo-\(UUID().uuidString)"
+                reply.from = "Pao"
+                reply.createdAt = Date()
+                self.coupons.append(reply)
+                self.knownCouponIDs?.insert(reply.id)
+                self.incomingGift = reply
+            }
+            return true
+        }
         do {
             _ = try await db.collection("users").document(partnerUID)
                 .collection("coupons").addDocument(data: gifted.firestoreData)
