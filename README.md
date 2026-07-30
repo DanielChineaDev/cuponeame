@@ -32,6 +32,12 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 
 <sub>Gradiente morado→rosa + Liquid Glass + tarjetas foto-a-sangre: el lenguaje visual de Cuponéame.</sub>
 
+| Modo oscuro |
+|:---:|
+| <img src="docs/capturas/oscuro.png" width="230" /> |
+
+<sub>Tema Sistema/Claro/Oscuro configurable desde Ajustes.</sub>
+
 </div>
 
 ---
