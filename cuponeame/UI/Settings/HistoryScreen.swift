@@ -29,7 +29,7 @@ struct HistoryScreen: View {
             } else {
                 List {
                     Section {
-                        Label("**\(store.redemptions.count)** momentos canjeados 💜",
+                        Label("**\(store.redemptions.count)** momentos canjeados",
                               systemImage: "checkmark.seal.fill")
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)

@@ -23,7 +23,7 @@ struct LoginSheet: View {
             VStack(spacing: 16) {
                 AuthHeader(
                     title: "¡Hola de nuevo!",
-                    subtitle: "Tus cupones te estaban esperando 💜")
+                    subtitle: "Tus cupones te estaban esperando")
 
                 VStack(spacing: 14) {
                     AuthField(icon: "envelope.fill") {

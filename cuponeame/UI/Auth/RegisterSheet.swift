@@ -25,7 +25,7 @@ struct RegisterSheet: View {
             VStack(spacing: 16) {
                 AuthHeader(
                     title: "Crea tu talonario",
-                    subtitle: "Estrenarás \(DefaultCoupons.all.count) cupones listos para regalar 🎁")
+                    subtitle: "Estrenarás \(DefaultCoupons.all.count) cupones listos para regalar")
 
                 VStack(spacing: 14) {
                     AuthField(icon: "person.fill") {
@@ -99,7 +99,7 @@ struct RegisterSheet: View {
                     .opacity(canSubmit ? 1 : 0.6)
                     .padding(.top, 6)
 
-                    Text("Al crear la cuenta estrenas el pack de cupones de ejemplo. 💜")
+                    Text("Al crear la cuenta estrenas el pack de cupones de ejemplo.")
                         .font(.footnote)
                         .foregroundStyle(CuponColors.subtleText)
                         .multilineTextAlignment(.center)

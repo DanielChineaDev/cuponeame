@@ -145,7 +145,7 @@ struct PartnerScreen: View {
             VStack(spacing: 12) {
                 BrandMark(width: 130)
                     .padding(.bottom, 6)
-                Text("Vinculado con **\(partner)** 💜")
+                Text("Vinculado con **\(partner)**")
                     .font(.title3)
                 Text("Crea un cupón en la pestaña Crear y elige \"Para \(partner)\" para regalárselo, o usa \"Regalar\" en el detalle de cualquier cupón.")
                     .font(.callout)

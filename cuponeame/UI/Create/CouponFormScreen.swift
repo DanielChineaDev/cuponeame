@@ -56,15 +56,15 @@ struct CouponFormScreen: View {
                     BrandBanner(
                         title: "Nuevo cupón",
                         subtitle: giftToPartner
-                            ? "Un regalo para \(auth.partnerName ?? "tu pareja") 🎁"
-                            : "Regala un momento 💜")
+                            ? "Un regalo para \(auth.partnerName ?? "tu pareja")"
+                            : "Regala un momento")
                 }
 
                 if let partnerName = auth.partnerName, !isEditing {
                     SectionCard("Destinatario") {
                         Picker("Para", selection: $giftToPartner) {
                             Text("Para mí").tag(false)
-                            Text("Para \(partnerName) 💝").tag(true)
+                            Text("Para \(partnerName)").tag(true)
                         }
                         .pickerStyle(.segmented)
                     }
@@ -137,7 +137,7 @@ struct CouponFormScreen: View {
                     } else if isEditing {
                         Text("GUARDAR CAMBIOS")
                     } else if giftToPartner, let partnerName = auth.partnerName {
-                        Text("ENVIAR A \(partnerName.uppercased()) 🎁")
+                        Label("ENVIAR A \(partnerName.uppercased())", systemImage: "gift.fill")
                     } else {
                         Text("CREAR CUPÓN")
                     }
