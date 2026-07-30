@@ -13,7 +13,7 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-0071E3?logo=swift&logoColor=white)
 ![Xcode](https://img.shields.io/badge/Xcode-26-1575F9?logo=xcode&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Backend-Firebase%2012-FFCA28?logo=firebase&logoColor=black)
-![Tests](https://img.shields.io/badge/tests-11%20%E2%9C%93-brightgreen)
+![Tests](https://img.shields.io/badge/tests-18%20%E2%9C%93-brightgreen)
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 
 </div>
@@ -24,11 +24,13 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 
 <div align="center">
 
-| Bienvenida | Iniciar sesión |
-|:---:|:---:|
-| <img src="docs/capturas/bienvenida.png" width="260" /> | <img src="docs/capturas/login.png" width="260" /> |
+| Bienvenida | Lista | Detalle |
+|:---:|:---:|:---:|
+| <img src="docs/capturas/bienvenida.png" width="230" /> | <img src="docs/capturas/lista.png" width="230" /> | <img src="docs/capturas/detalle.png" width="230" /> |
+| **Crear** | **Historial** | **Iniciar sesión** |
+| <img src="docs/capturas/crear.png" width="230" /> | <img src="docs/capturas/historial.png" width="230" /> | <img src="docs/capturas/login.png" width="230" /> |
 
-<sub>Gradiente morado→rosa + botones de cristal: el lenguaje visual de Cuponéame.</sub>
+<sub>Gradiente morado→rosa + Liquid Glass + tarjetas foto-a-sangre: el lenguaje visual de Cuponéame.</sub>
 
 </div>
 
@@ -45,6 +47,7 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 - 📤 **Compartir** cupones por cualquier app (ShareLink).
 - 🔐 **Cuenta con Firebase Auth**: sesión persistente, recuperar contraseña, cambiar nombre y **eliminar cuenta** (requisito App Store).
 - 🎁 **Pack de ejemplo**: 11 cupones para estrenar la cuenta (o restaurarlos desde Ajustes).
+- 👤 **Modo demo** ("Probar sin cuenta"): toda la app funciona con datos locales en memoria — ideal para probarla y para la review de la App Store.
 - 🧊 **Liquid Glass iOS 26** con fallback a materiales en iOS 17-25; modo claro y oscuro.
 - 📶 Las imágenes del catálogo son locales: la lista funciona **sin conexión**.
 
@@ -115,7 +118,7 @@ xcodegen generate
 open Cuponeame.xcodeproj
 ```
 
-Los tests: esquema **Cuponeame** → ⌘U (11 tests del modelo y contrato Firestore).
+Los tests: esquema **Cuponeame** → ⌘U (18 tests: modelo, contrato Firestore y store en modo demo).
 
 ---
 
@@ -124,6 +127,7 @@ Los tests: esquema **Cuponeame** → ⌘U (11 tests del modelo y contrato Firest
 - [x] Migración a XcodeGen + Firebase 12 + Liquid Glass
 - [x] Crear/editar cupones con foto propia
 - [x] Favoritos, filtros, buscador e historial
+- [x] Modo demo para probar la app sin cuenta
 - [ ] **Modo pareja**: vincular dos cuentas y regalarse cupones el uno al otro
 - [ ] Notificación push cuando tu pareja canjea un cupón
 - [ ] Avatares personalizables (hoy: pingüino para todo el mundo 🐧)
