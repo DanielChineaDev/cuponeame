@@ -1,0 +1,17 @@
+# Secretos (descargar de la consola de Firebase al clonar)
+cuponeame/Configurations/GoogleService-Info.plist
+
+# Xcode
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+*.hmap
+*.ipa
+
+# SPM
+.swiftpm/
+.build/
+
+# macOS
+.DS_Store
