@@ -17,6 +17,7 @@
 		43A2A63D7ADC54CC0F38B1D4 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 98639F82699CB703FA15FA56 /* FirebaseStorage */; };
 		4E8968B3816E7C4ECC3545EF /* Redemption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164D43380280584DD9294A95 /* Redemption.swift */; };
 		549A2FDA6914E1D09B026DCC /* cuponeameUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2325E4A0E7CB696B34087BAD /* cuponeameUITestsLaunchTests.swift */; };
+		551AE445344491F0200A1EEF /* CouponStoreDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E190CF51F0B946852024475 /* CouponStoreDemoTests.swift */; };
 		5E4ED441D4E0DC98672ACC53 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E31F2A9281607C3CFD5CD3 /* Glass.swift */; };
 		5F812D60A84984AFFBBDED38 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6A1D028B2AF5B35E82B8FF0A /* Kingfisher */; };
 		670D43DAF5B9E1B9E5D6055E /* CouponFormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EB6DB1254CD494027E0E95 /* CouponFormScreen.swift */; };
@@ -65,6 +66,7 @@
 		3AAB6092A4CCEED4CE0656E3 /* CuponeameTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CuponeameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon.swift; sourceTree = "<group>"; };
 		3DC41F16556D0B44595C5FEC /* CouponListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponListScreen.swift; sourceTree = "<group>"; };
+		4E190CF51F0B946852024475 /* CouponStoreDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponStoreDemoTests.swift; sourceTree = "<group>"; };
 		55E31F2A9281607C3CFD5CD3 /* Glass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Glass.swift; sourceTree = "<group>"; };
 		593F6B8E9E9440D44BFD3015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		60CEB08952743CEE81949BFD /* CouponDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponDetailScreen.swift; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 		F998D2B777EB74A694306C84 /* cuponeameTests */ = {
 			isa = PBXGroup;
 			children = (
+				4E190CF51F0B946852024475 /* CouponStoreDemoTests.swift */,
 				9D690655EB5330A7B45B9249 /* CouponTests.swift */,
 			);
 			path = cuponeameTests;
@@ -445,6 +448,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				551AE445344491F0200A1EEF /* CouponStoreDemoTests.swift in Sources */,
 				D147D1DD3F9057923805261F /* CouponTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
