@@ -50,12 +50,14 @@ struct SettingsScreen: View {
                 }
 
                 Section {
-                    Button("Cerrar sesión") {
+                    Button(auth.isDemoMode ? "Salir del modo demo" : "Cerrar sesión") {
                         auth.signOut()
                     }
 
-                    Button("Eliminar cuenta", role: .destructive) {
-                        showDeleteConfirmation = true
+                    if !auth.isDemoMode {
+                        Button("Eliminar cuenta", role: .destructive) {
+                            showDeleteConfirmation = true
+                        }
                     }
                 }
 
@@ -105,7 +107,7 @@ struct SettingsScreen: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(auth.userName ?? "…")
                         .font(.title3.bold())
-                    Text(auth.email)
+                    Text(auth.isDemoMode ? "Modo demo · los cambios no se guardan" : auth.email)
                         .font(.subheadline)
                         .foregroundStyle(CuponColors.subtleText)
                 }

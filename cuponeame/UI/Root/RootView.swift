@@ -8,17 +8,24 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if auth.user != nil {
+            if auth.isSignedIn {
                 MainTabs()
             } else {
                 WelcomeScreen()
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: auth.user?.uid)
+        .animation(.easeInOut(duration: 0.3), value: auth.isSignedIn)
         .onChange(of: auth.user?.uid, initial: true) { _, uid in
             if let uid {
                 store.attach(uid: uid)
-            } else {
+            } else if !auth.isDemoMode {
+                store.detach()
+            }
+        }
+        .onChange(of: auth.isDemoMode) { _, demo in
+            if demo {
+                store.attachDemo()
+            } else if auth.user == nil {
                 store.detach()
             }
         }

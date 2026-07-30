@@ -67,9 +67,14 @@ struct CouponFormScreen: View {
 
             Section("Imagen") {
                 imageGallery
-                PhotosPicker(selection: $photoItem, matching: .images) {
-                    Label(customPhoto == nil ? "Usar una foto propia" : "Cambiar la foto propia",
-                          systemImage: "photo.on.rectangle.angled")
+                if store.isDemo {
+                    Label("Las fotos propias necesitan una cuenta", systemImage: "photo.on.rectangle.angled")
+                        .foregroundStyle(CuponColors.subtleText)
+                } else {
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Label(customPhoto == nil ? "Usar una foto propia" : "Cambiar la foto propia",
+                              systemImage: "photo.on.rectangle.angled")
+                    }
                 }
             }
 
@@ -193,13 +198,16 @@ struct CouponFormScreen: View {
     }
 
     private func save() async {
-        guard let uid = auth.user?.uid else { return }
         isSaving = true
         saveError = nil
         defer { isSaving = false }
 
         var finalImageName = imageName
         if let customPhoto {
+            guard let uid = auth.user?.uid else {
+                saveError = "Las fotos propias necesitan una cuenta."
+                return
+            }
             do {
                 finalImageName = try await ImageService.shared.uploadCouponImage(customPhoto, uid: uid)
             } catch {

@@ -3,6 +3,7 @@ import SwiftUI
 /// Portada de la app: foto + gradiente morado→rosa de la marca, logo y
 /// botones de cristal. Es la seña de identidad visual de Cuponéame.
 struct WelcomeScreen: View {
+    @Environment(AuthService.self) private var auth
     @State private var showLogin = false
     @State private var showRegister = false
 
@@ -36,6 +37,16 @@ struct WelcomeScreen: View {
 
                 Button("CREAR CUENTA") { showRegister = true }
                     .buttonStyle(GlassButtonStyle())
+
+                Button {
+                    auth.enterDemo()
+                } label: {
+                    Text("Probar sin cuenta")
+                        .font(.subheadline.weight(.semibold))
+                        .underline()
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.top, 4)
 
                 Text("v\(AppConfig.version) · BPO Studios")
                     .font(.footnote)

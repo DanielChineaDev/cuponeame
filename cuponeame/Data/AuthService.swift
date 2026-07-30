@@ -9,6 +9,8 @@ import FirebaseFirestore
 final class AuthService {
     private(set) var user: FirebaseAuth.User?
     private(set) var userName: String?
+    /// Modo demo: la app entera funciona con datos locales, sin cuenta.
+    private(set) var isDemoMode = false
     var errorMessage: String?
     var isWorking = false
 
@@ -16,6 +18,9 @@ final class AuthService {
     private var db: Firestore { Firestore.firestore() }
 
     var email: String { user?.email ?? "" }
+
+    /// Hay sesión real o modo demo: se muestra la app interior.
+    var isSignedIn: Bool { user != nil || isDemoMode }
 
     init() {
         stateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
@@ -60,7 +65,17 @@ final class AuthService {
         }
     }
 
+    func enterDemo() {
+        isDemoMode = true
+        userName = "Invitado"
+    }
+
     func signOut() {
+        if isDemoMode {
+            isDemoMode = false
+            userName = nil
+            return
+        }
         do {
             try Auth.auth().signOut()
         } catch {
@@ -71,7 +86,7 @@ final class AuthService {
     /// Borra los datos de Firestore y después la cuenta de Auth.
     @discardableResult
     func deleteAccount() async -> Bool {
-        guard let user else { return false }
+        guard let user, !isDemoMode else { return false }
         return await run {
             let uid = user.uid
             let userRef = self.db.collection("users").document(uid)
@@ -96,7 +111,12 @@ final class AuthService {
 
     @discardableResult
     func updateName(_ newName: String) async -> Bool {
-        guard let uid = user?.uid, !newName.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
+        guard !newName.trimmingCharacters(in: .whitespaces).isEmpty else { return false }
+        if isDemoMode {
+            userName = newName
+            return true
+        }
+        guard let uid = user?.uid else { return false }
         return await run {
             try await self.db.collection("users").document(uid)
                 .setData(["name": newName], merge: true)

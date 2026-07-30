@@ -69,8 +69,17 @@ struct CouponListScreen: View {
                 }
 
                 if filtered.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                        .padding(.top, 60)
+                    Group {
+                        if searchText.isEmpty {
+                            ContentUnavailableView(
+                                "Nada por aquí",
+                                systemImage: "ticket",
+                                description: Text("No hay cupones con este filtro."))
+                        } else {
+                            ContentUnavailableView.search(text: searchText)
+                        }
+                    }
+                    .padding(.top, 60)
                 }
             }
             .padding()

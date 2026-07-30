@@ -9,6 +9,8 @@ import FirebaseFirestore
 final class CouponStore {
     private(set) var coupons: [Coupon] = []
     private(set) var redemptions: [Redemption] = []
+    /// Modo demo: todo opera sobre datos locales, sin tocar Firestore.
+    private(set) var isDemo = false
     var errorMessage: String?
 
     private var uid: String?
@@ -69,8 +71,43 @@ final class CouponStore {
         couponsListener = nil
         redemptionsListener = nil
         uid = nil
+        isDemo = false
         coupons = []
         redemptions = []
+    }
+
+    // MARK: - Modo demo
+
+    /// Siembra el pack de ejemplo en memoria con estados variados
+    /// (favorito, en espera, agotado) para poder probar toda la UI sin cuenta.
+    func attachDemo() {
+        detach()
+        isDemo = true
+        uid = "demo"
+
+        var seeded: [Coupon] = []
+        for (index, coupon) in DefaultCoupons.all.enumerated() {
+            var demo = coupon
+            demo.id = "demo-\(index)"
+            demo.createdAt = Date().addingTimeInterval(TimeInterval(index))
+            seeded.append(demo)
+        }
+        // Beso: favorito con usos gastados. Cerveza: en espera. Cine: agotado.
+        seeded[2].favorite = true
+        seeded[2].redeemCount = 2
+        seeded[8].used = true
+        seeded[8].redeemCount = 1
+        seeded[8].cooldownExpirationDate = Date().addingTimeInterval(7200)
+        seeded[10].used = true
+        seeded[10].redeemCount = seeded[10].redeemLimit
+        coupons = seeded
+
+        redemptions = [
+            Redemption(id: "demo-r0", couponID: "demo-2", title: "Beso", category: "Romance",
+                       date: Date().addingTimeInterval(-3600)),
+            Redemption(id: "demo-r1", couponID: "demo-8", title: "Cerveza", category: "Gastronomía",
+                       date: Date().addingTimeInterval(-90000)),
+        ]
     }
 
     // MARK: - CRUD
@@ -78,6 +115,17 @@ final class CouponStore {
     /// Crea (`id` vacío) o actualiza un cupón.
     func save(_ coupon: Coupon) async {
         guard let uid else { return }
+        if isDemo {
+            if coupon.id.isEmpty {
+                var newCoupon = coupon
+                newCoupon.id = "demo-\(UUID().uuidString)"
+                newCoupon.createdAt = Date()
+                coupons.append(newCoupon)
+            } else if let index = coupons.firstIndex(where: { $0.id == coupon.id }) {
+                coupons[index] = coupon
+            }
+            return
+        }
         do {
             if coupon.id.isEmpty {
                 var newCoupon = coupon
@@ -94,6 +142,10 @@ final class CouponStore {
 
     func delete(_ coupon: Coupon) async {
         guard let uid, !coupon.id.isEmpty else { return }
+        if isDemo {
+            coupons.removeAll { $0.id == coupon.id }
+            return
+        }
         do {
             try await couponsRef(uid: uid).document(coupon.id).delete()
         } catch {
@@ -103,6 +155,12 @@ final class CouponStore {
 
     func toggleFavorite(_ coupon: Coupon) async {
         guard let uid, !coupon.id.isEmpty else { return }
+        if isDemo {
+            if let index = coupons.firstIndex(where: { $0.id == coupon.id }) {
+                coupons[index].favorite.toggle()
+            }
+            return
+        }
         try? await couponsRef(uid: uid).document(coupon.id)
             .updateData(["favorite": !coupon.favorite])
     }
@@ -113,6 +171,18 @@ final class CouponStore {
     func redeem(_ coupon: Coupon) async {
         guard let uid, !coupon.id.isEmpty, coupon.canRedeem() else { return }
         let expiration = coupon.cooldownTime.map { Date().addingTimeInterval($0) }
+        if isDemo {
+            if let index = coupons.firstIndex(where: { $0.id == coupon.id }) {
+                coupons[index].used = true
+                coupons[index].redeemCount += 1
+                coupons[index].cooldownExpirationDate = expiration
+            }
+            redemptions.insert(
+                Redemption(id: "demo-\(UUID().uuidString)", couponID: coupon.id,
+                           title: coupon.title, category: coupon.category, date: Date()),
+                at: 0)
+            return
+        }
         do {
             try await couponsRef(uid: uid).document(coupon.id).updateData([
                 "used": true,
@@ -147,6 +217,15 @@ final class CouponStore {
 
     func addDefaultPack() async {
         guard let uid else { return }
+        if isDemo {
+            for coupon in DefaultCoupons.all {
+                var demo = coupon
+                demo.id = "demo-\(UUID().uuidString)"
+                demo.createdAt = Date()
+                coupons.append(demo)
+            }
+            return
+        }
         do {
             try await Self.seedDefaults(uid: uid)
         } catch {
