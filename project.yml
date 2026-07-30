@@ -32,6 +32,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.bpo.cuponeame
+        CODE_SIGN_ENTITLEMENTS: cuponeame/Cuponeame.entitlements
     info:
       path: cuponeame/Info.plist
       properties:
@@ -54,6 +55,29 @@ targets:
       - package: Firebase
         product: FirebaseStorage
       - package: Kingfisher
+      - target: CuponWidget
+        embed: true
+
+  CuponWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CuponWidget
+      # El snapshot del App Group se compila en app y widget.
+      - path: cuponeame/Shared/WidgetSnapshot.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bpo.cuponeame.widget
+        CODE_SIGN_ENTITLEMENTS: CuponWidget/CuponWidget.entitlements
+    info:
+      path: CuponWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Cuponéame
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDevelopmentRegion: es
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
   CuponeameTests:
     type: bundle.unit-test
