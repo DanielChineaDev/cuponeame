@@ -11,6 +11,8 @@ enum CuponColors {
     static let background = adaptive(light: 0xFAF7FC, dark: 0x140F1A)
     static let surface = adaptive(light: 0xFFFFFF, dark: 0x1D1626)
     static let subtleText = adaptive(light: 0x6B6470, dark: 0xA9A1B0)
+    /// Relleno fijo del buscador (no depende de .primary, que parpadea al enfocar).
+    static let searchFill = adaptive(light: 0xEFEAF2, dark: 0x2A2233)
 
     /// Gradiente de marca (botones destacados, fondos de auth).
     static var brandGradient: LinearGradient {
