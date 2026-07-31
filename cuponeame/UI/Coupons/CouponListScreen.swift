@@ -30,12 +30,12 @@ struct CouponListScreen: View {
         }
     }
 
+    @State private var headerCollapse: CGFloat = 0
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    header
-
                     if store.coupons.isEmpty {
                         emptyState
                             .padding(.top, 40)
@@ -68,8 +68,10 @@ struct CouponListScreen: View {
                 }
                 .padding()
             }
+            .brandScrollTracking($headerCollapse)
             .background(CuponColors.background)
             .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .top, spacing: 0) { header }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 CouponDetailScreen(couponID: id)
@@ -79,69 +81,29 @@ struct CouponListScreen: View {
 
     // MARK: - Cabecera
 
+    private var ready: Int { store.coupons.filter { $0.canRedeem() }.count }
+
     private var header: some View {
-        VStack(spacing: 14) {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 3) {
-                    if let name = auth.userName, !name.isEmpty {
-                        Label("Hola, \(name)", systemImage: "hand.wave.fill")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.white.opacity(0.9))
-                    }
-                    Text("Cupones")
-                        .font(.system(size: 32, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.white)
-                }
-                Spacer()
-                AvatarView(emoji: auth.avatar, size: 46)
-                    .overlay(Circle().stroke(.white, lineWidth: 2))
-            }
-
-            searchField
-
-            if !store.coupons.isEmpty {
-                HStack {
-                    Label("\(store.coupons.filter { $0.canRedeem() }.count) de \(store.coupons.count) listos para canjear",
-                          systemImage: "ticket.fill")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 7)
-                        .cuponGlassCapsule()
-                    Spacer()
-                }
-            }
+        BrandHeader(title: "Cupones",
+                    searchText: store.coupons.isEmpty ? nil : $searchText,
+                    collapse: headerCollapse,
+                    bottom: store.coupons.isEmpty ? nil : AnyView(readyBar)) {
+            AvatarView(emoji: auth.avatar, size: 40 - 6 * min(max(headerCollapse, 0), 1))
+                .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
         }
-        .padding(16)
-        .background(
-            LinearGradient(colors: [CuponColors.brandPurple, CuponColors.brandPink],
-                           startPoint: .topLeading, endPoint: .bottomTrailing),
-            in: RoundedRectangle(cornerRadius: 24))
     }
 
-    private var searchField: some View {
+    /// Barra de progreso de cupones listos, bajo el buscador.
+    private var readyBar: some View {
         HStack(spacing: 10) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.white.opacity(0.9))
-
-            TextField("", text: $searchText,
-                      prompt: Text("Buscar cupón").foregroundStyle(.white.opacity(0.7)))
-                .foregroundStyle(.white)
-                .tint(.white)
-                .autocorrectionDisabled()
-
-            if !searchText.isEmpty {
-                Button {
-                    searchText = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.white.opacity(0.8))
-                }
-            }
+            Image(systemName: "ticket.fill")
+                .font(.footnote)
+                .foregroundStyle(CuponColors.brandPurple)
+            Text("**\(ready)** de \(store.coupons.count) listos para canjear")
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(.secondary)
+            Spacer()
         }
-        .padding(.horizontal, 14)
-        .frame(height: 48)
-        .cuponGlass(cornerRadius: 14)
     }
 
     private var filterChips: some View {

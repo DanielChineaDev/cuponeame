@@ -5,6 +5,7 @@ struct SettingsScreen: View {
     @Environment(CouponStore.self) private var store
 
     @AppStorage("appTheme") private var themeRaw = AppTheme.system.rawValue
+    @AppStorage("notifsEnabled") private var notifsEnabled = false
 
     @State private var showNameEditor = false
     @State private var newName = ""
@@ -12,12 +13,12 @@ struct SettingsScreen: View {
     @State private var showPackConfirmation = false
     @State private var showAvatarPicker = false
     @State private var passwordResetSent = false
+    @State private var notifsDenied = false
+    @State private var headerCollapse: CGFloat = 0
 
     var body: some View {
         NavigationStack {
             Form {
-                screenTitle
-
                 profileCard
 
                 Section("Pareja") {
@@ -25,10 +26,11 @@ struct SettingsScreen: View {
                         PartnerScreen()
                     } label: {
                         if let partner = auth.partnerName {
-                            Label("Vinculado con \(partner)", systemImage: "heart.circle.fill")
-                                .foregroundStyle(CuponColors.brandPink)
+                            SettingRow(icon: "heart.fill", tint: CuponColors.brandPink,
+                                       title: "Vinculado con \(partner)")
                         } else {
-                            Label("Modo pareja · invita a tu persona", systemImage: "heart.circle")
+                            SettingRow(icon: "heart.circle", tint: CuponColors.brandPink,
+                                       title: "Modo pareja", subtitle: "Invita a tu persona")
                         }
                     }
                 }
@@ -38,21 +40,37 @@ struct SettingsScreen: View {
                         newName = auth.userName ?? ""
                         showNameEditor = true
                     } label: {
-                        Label("Cambiar nombre", systemImage: "pencil")
+                        SettingRow(icon: "person.text.rectangle.fill",
+                                   tint: CuponColors.brandPurple, title: "Cambiar nombre")
                     }
 
                     if !auth.isDemoMode {
                         Button {
                             Task { passwordResetSent = await auth.resetPassword(email: auth.email) }
                         } label: {
-                            Label("Cambiar contraseña", systemImage: "key.fill")
+                            SettingRow(icon: "key.fill", tint: .orange, title: "Cambiar contraseña")
                         }
                     }
                 } header: {
                     Text("Perfil")
                 } footer: {
                     if passwordResetSent {
-                        Text("Te hemos enviado un correo para cambiar la contraseña. ✉️")
+                        Text("Te hemos enviado un correo para cambiar la contraseña.")
+                    }
+                }
+
+                Section {
+                    Toggle(isOn: $notifsEnabled) {
+                        SettingRow(icon: "bell.fill", tint: .red,
+                                   title: "Avisos",
+                                   subtitle: "Regalos que recibes y cupones disponibles")
+                    }
+                    .tint(CuponColors.brandPink)
+                } header: {
+                    Text("Notificaciones")
+                } footer: {
+                    if notifsDenied {
+                        Text("Permiso denegado. Actívalo en Ajustes de iOS › Cuponéame › Notificaciones.")
                     }
                 }
 
@@ -60,7 +78,8 @@ struct SettingsScreen: View {
                     NavigationLink {
                         HistoryScreen()
                     } label: {
-                        Label("Historial de canjes", systemImage: "clock.arrow.circlepath")
+                        SettingRow(icon: "clock.arrow.circlepath", tint: .indigo,
+                                   title: "Historial de canjes")
                             .badge(store.redemptions.count)
                     }
                 }
@@ -69,7 +88,8 @@ struct SettingsScreen: View {
                     Button {
                         showPackConfirmation = true
                     } label: {
-                        Label("Añadir pack de ejemplo", systemImage: "gift.fill")
+                        SettingRow(icon: "gift.fill", tint: CuponColors.brandPink,
+                                   title: "Añadir pack de ejemplo")
                     }
                 } header: {
                     Text("Cupones")
@@ -83,16 +103,17 @@ struct SettingsScreen: View {
                             Text(theme.label).tag(theme.rawValue)
                         }
                     } label: {
-                        Label("Tema", systemImage: "circle.lefthalf.filled")
+                        SettingRow(icon: "circle.lefthalf.filled", tint: .gray, title: "Tema")
                     }
                 }
 
                 Section("Comparte el amor") {
-                    ShareLink(item: "🎟️ Cuponéame — cupones para regalar momentos a quien más quieres. Hecho con 💜 por BPO Studios.") {
-                        Label("Compartir Cuponéame", systemImage: "square.and.arrow.up")
+                    ShareLink(item: "Cuponéame — cupones para regalar momentos a quien más quieres. Hecho por BPO Studios.") {
+                        SettingRow(icon: "square.and.arrow.up.fill", tint: CuponColors.brandPurple,
+                                   title: "Compartir Cuponéame")
                     }
                     Link(destination: URL(string: "mailto:l3lueart@gmail.com?subject=Sugerencia%20Cupon%C3%A9ame")!) {
-                        Label("Enviar una sugerencia", systemImage: "envelope.fill")
+                        SettingRow(icon: "envelope.fill", tint: .blue, title: "Enviar una sugerencia")
                     }
                 }
 
@@ -119,7 +140,22 @@ struct SettingsScreen: View {
                     }
                 }
             }
+            .brandScrollTracking($headerCollapse)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                BrandHeader("Ajustes", collapse: headerCollapse)
+            }
             .toolbar(.hidden, for: .navigationBar)
+            .task {
+                notifsEnabled = await NotificationService.shared.authorizationStatus() == .authorized
+            }
+            .onChange(of: notifsEnabled) { _, enabled in
+                guard enabled else { notifsDenied = false; return }
+                Task {
+                    let granted = await NotificationService.shared.requestPermission()
+                    notifsEnabled = granted
+                    notifsDenied = !granted
+                }
+            }
             .sheet(isPresented: $showAvatarPicker) {
                 AvatarPickerSheet()
             }
@@ -150,16 +186,6 @@ struct SettingsScreen: View {
     }
 
     // MARK: - Cabecera y carnet
-
-    private var screenTitle: some View {
-        Section {
-            Text("Ajustes")
-                .font(.system(size: 32, weight: .heavy, design: .rounded))
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
-    }
 
     /// El carnet es un ticket, como todo en la app: datos arriba, perforación
     /// con muescas y el talón con las estadísticas.
@@ -241,5 +267,33 @@ struct SettingsScreen: View {
                 .foregroundStyle(.white.opacity(0.85))
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+/// Fila de ajustes con icono en cuadradito de color (estilo iOS moderno).
+struct SettingRow: View {
+    let icon: String
+    let tint: Color
+    let title: String
+    var subtitle: String?
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(tint, in: RoundedRectangle(cornerRadius: 8))
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .foregroundStyle(.primary)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(CuponColors.subtleText)
+                }
+            }
+        }
     }
 }
