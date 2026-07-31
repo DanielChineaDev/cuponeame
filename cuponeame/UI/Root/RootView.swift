@@ -40,7 +40,7 @@ struct MainTabs: View {
             CouponListScreen()
                 .tabItem { Label("Cupones", systemImage: "ticket.fill") }
 
-            CreateTab()
+            CreateHubScreen()
                 .tabItem { Label("Crear", systemImage: "plus.circle.fill") }
 
             SettingsScreen()
@@ -53,15 +53,6 @@ struct MainTabs: View {
             Button("Genial") { store.incomingGift = nil }
         } message: {
             Text("Te ha enviado «\(store.incomingGift?.title ?? "un cupón")». Ya está en tu talonario.")
-        }
-    }
-}
-
-/// Pestaña de creación: el formulario en modo "nuevo cupón".
-private struct CreateTab: View {
-    var body: some View {
-        NavigationStack {
-            CouponFormScreen(mode: .create)
         }
     }
 }

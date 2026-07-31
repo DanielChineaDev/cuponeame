@@ -9,6 +9,10 @@ struct CouponFormScreen: View {
     }
 
     let mode: Mode
+    /// Idea con la que arrancar el formulario (desde el hub de Crear).
+    var template: CouponTemplate?
+    /// Arrancar con el destinatario en "pareja" (botón «Regalar» del hub).
+    var startGifting = false
 
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
@@ -26,9 +30,14 @@ struct CouponFormScreen: View {
     @State private var customPhoto: UIImage?
     @State private var giftToPartner = false
     @State private var isSaving = false
-    @State private var showSaved = false
-    @State private var savedMessage = ""
     @State private var saveError: String?
+    @State private var didPrefill = false
+
+    // Diálogos posteriores a crear (solo modo crear, no regalo directo).
+    @State private var showGiftedConfirm = false
+    @State private var showOfferGift = false
+    @State private var showNoPartnerHint = false
+    @State private var createdCoupon: Coupon?
 
     /// Presets de tiempo de espera entre canjeos.
     private static let cooldownOptions: [(label: String, value: TimeInterval?)] = [
@@ -184,8 +193,28 @@ struct CouponFormScreen: View {
                 }
             }
         }
-        .alert(savedMessage, isPresented: $showSaved) {
-            Button("Genial") {}
+        .alert("¡Cupón enviado a \(auth.partnerName ?? "tu pareja")!", isPresented: $showGiftedConfirm) {
+            Button("Genial") { dismiss() }
+        } message: {
+            Text("Ya lo tiene en su talonario.")
+        }
+        .alert("¡Cupón creado!", isPresented: $showOfferGift) {
+            Button("Regalárselo a \(auth.partnerName ?? "mi pareja")") {
+                Task {
+                    if let createdCoupon, let partnerUID = auth.partnerUID {
+                        await store.gift(createdCoupon, to: partnerUID, from: auth.userName ?? "Tu pareja")
+                    }
+                    dismiss()
+                }
+            }
+            Button("Ahora no", role: .cancel) { dismiss() }
+        } message: {
+            Text("Ya está en tu talonario. ¿Se lo regalas también a \(auth.partnerName ?? "tu pareja")?")
+        }
+        .alert("¡Cupón creado!", isPresented: $showNoPartnerHint) {
+            Button("Entendido") { dismiss() }
+        } message: {
+            Text("Ya está en tu talonario. Si vinculas tu cuenta con tu pareja en Ajustes, podrás enviárselo con un toque.")
         }
     }
 
@@ -271,21 +300,36 @@ struct CouponFormScreen: View {
     // MARK: - Guardado
 
     private func loadIfEditing() {
-        guard case .edit(let coupon) = mode, title.isEmpty else { return }
-        title = coupon.title
-        shortDescription = coupon.shortDescription
-        longDescription = coupon.description
-        category = CouponCategory(rawValue: coupon.category) ?? .personalizado
-        imageName = coupon.imageName
-        // Cooldowns legacy que no coinciden con ningún preset: al más cercano,
-        // para que el picker no se quede sin selección.
-        if let current = coupon.cooldownTime {
-            cooldown = Self.cooldownOptions.compactMap(\.value)
-                .min { abs($0 - current) < abs($1 - current) }
-        } else {
-            cooldown = nil
+        guard !didPrefill else { return }
+        didPrefill = true
+
+        if startGifting, auth.partnerName != nil {
+            giftToPartner = true
         }
-        redeemLimit = coupon.redeemLimit
+
+        if case .edit(let coupon) = mode {
+            title = coupon.title
+            shortDescription = coupon.shortDescription
+            longDescription = coupon.description
+            category = CouponCategory(rawValue: coupon.category) ?? .personalizado
+            imageName = coupon.imageName
+            // Cooldowns legacy que no coinciden con ningún preset: al más cercano,
+            // para que el picker no se quede sin selección.
+            if let current = coupon.cooldownTime {
+                cooldown = Self.cooldownOptions.compactMap(\.value)
+                    .min { abs($0 - current) < abs($1 - current) }
+            } else {
+                cooldown = nil
+            }
+            redeemLimit = coupon.redeemLimit
+        } else if let template {
+            title = template.title
+            shortDescription = template.shortDescription
+            longDescription = template.description
+            category = template.category
+            imageName = template.imageName
+            cooldown = template.cooldown
+        }
     }
 
     private func save() async {
@@ -320,13 +364,18 @@ struct CouponFormScreen: View {
             if giftToPartner, let partnerUID = auth.partnerUID {
                 guard await store.gift(coupon, to: partnerUID,
                                        from: auth.userName ?? "Tu pareja") else { return }
-                savedMessage = "¡Cupón enviado a \(auth.partnerName ?? "tu pareja")! 🎁"
+                showGiftedConfirm = true
             } else {
                 await store.save(coupon)
-                savedMessage = "¡Cupón creado! Ya está en tu lista."
+                // Tras crearlo para mí: ofrecer regalarlo si hay pareja, o
+                // sugerir vincularse si aún no lo está.
+                if auth.partnerName != nil {
+                    createdCoupon = coupon
+                    showOfferGift = true
+                } else {
+                    showNoPartnerHint = true
+                }
             }
-            resetForm()
-            showSaved = true
 
         case .edit(let original):
             var updated = original
@@ -340,18 +389,5 @@ struct CouponFormScreen: View {
             await store.save(updated)
             dismiss()
         }
-    }
-
-    private func resetForm() {
-        title = ""
-        shortDescription = ""
-        longDescription = ""
-        category = .romance
-        imageName = DefaultCoupons.imageOptions[0]
-        cooldown = 10800
-        redeemLimit = 5
-        customPhoto = nil
-        photoItem = nil
-        giftToPartner = false
     }
 }

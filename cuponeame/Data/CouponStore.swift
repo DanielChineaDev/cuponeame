@@ -91,6 +91,7 @@ final class CouponStore {
                 if let known = self.knownCouponIDs,
                    let gift = sorted.last(where: { $0.from != nil && !known.contains($0.id) }) {
                     self.incomingGift = gift
+                    NotificationService.shared.notifyIncomingGift(gift)
                 }
                 self.knownCouponIDs = Set(sorted.map(\.id))
                 self.coupons = sorted
@@ -216,6 +217,10 @@ final class CouponStore {
     func redeem(_ coupon: Coupon) async {
         guard let uid, !coupon.id.isEmpty, coupon.canRedeem() else { return }
         let expiration = coupon.cooldownTime.map { Date().addingTimeInterval($0) }
+        // Aviso local para cuando el cooldown termine (si hay permiso).
+        if let expiration, coupon.redeemCount + 1 < coupon.redeemLimit {
+            NotificationService.shared.scheduleCooldownEnd(for: coupon, at: expiration)
+        }
         if isDemo {
             if let index = coupons.firstIndex(where: { $0.id == coupon.id }) {
                 coupons[index].used = true
