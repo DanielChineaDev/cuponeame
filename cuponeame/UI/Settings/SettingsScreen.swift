@@ -14,11 +14,17 @@ struct SettingsScreen: View {
     @State private var showAvatarPicker = false
     @State private var passwordResetSent = false
     @State private var notifsDenied = false
-    @State private var headerCollapse: CGFloat = 0
+    @State private var headerCollapse = ScrollCollapse()
 
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    BrandHeader("Ajustes")
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
+
                 profileCard
 
                 Section("Pareja") {
@@ -140,9 +146,9 @@ struct SettingsScreen: View {
                     }
                 }
             }
-            .brandScrollTracking($headerCollapse)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                BrandHeader("Ajustes", collapse: headerCollapse)
+            .brandScrollTracking(headerCollapse)
+            .overlay(alignment: .top) {
+                CompactHeaderBar("Ajustes", collapse: headerCollapse)
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {

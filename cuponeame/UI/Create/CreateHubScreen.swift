@@ -6,7 +6,7 @@ import SwiftUI
 struct CreateHubScreen: View {
     @Environment(AuthService.self) private var auth
 
-    @State private var headerCollapse: CGFloat = 0
+    @State private var headerCollapse = ScrollCollapse()
 
     private let ideaColumns = [GridItem(.flexible(), spacing: 12),
                                GridItem(.flexible(), spacing: 12)]
@@ -15,6 +15,8 @@ struct CreateHubScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    BrandHeader("Crear")
+
                     primaryCard
 
                     partnerCard
@@ -23,10 +25,10 @@ struct CreateHubScreen: View {
                 }
                 .padding(16)
             }
-            .brandScrollTracking($headerCollapse)
+            .brandScrollTracking(headerCollapse)
             .background(CuponColors.background)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                BrandHeader("Crear", collapse: headerCollapse)
+            .overlay(alignment: .top) {
+                CompactHeaderBar("Crear", collapse: headerCollapse)
             }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Route.self) { route in

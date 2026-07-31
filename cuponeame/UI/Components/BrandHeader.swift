@@ -1,35 +1,34 @@
 import SwiftUI
 
-/// Cabecera de cristal de las pantallas principales: mini ticket + título que
-/// encogen al hacer scroll, con buscador y contenido inferior opcionales que
-/// se pliegan. Mismo patrón que GasHeader en GasApp; se fija con
-/// `.safeAreaInset(.top)` y se alimenta con `.brandScrollTracking(_:)`.
+/// Progreso de colapso (0 = arriba, 1 = con scroll) en un objeto observable:
+/// así el scroll solo re-dibuja la barra compacta y NO la lista de cupones.
+@Observable
+final class ScrollCollapse {
+    var value: CGFloat = 0
+}
+
+/// Cabecera grande de cristal (mini ticket + título, buscador y contenido
+/// inferior opcionales). Va como PRIMER elemento del scroll y se desplaza con
+/// el contenido; al subir, `CompactHeaderBar` aparece fijada arriba.
 struct BrandHeader<Trailing: View>: View {
     let title: String
-    /// nil = sin buscador.
     var searchText: Binding<String>? = nil
-    /// 0 = expandida, 1 = colapsada.
-    var collapse: CGFloat = 0
-    /// Contenido bajo el título (p. ej. la barra de "listos"); se pliega.
     var bottom: AnyView? = nil
     @ViewBuilder var trailing: Trailing
 
     @FocusState private var searchFocused: Bool
-    @State private var bottomHeight: CGFloat = 0
-
-    private var clamped: CGFloat { min(max(collapse, 0), 1) }
 
     var body: some View {
-        VStack(spacing: 12 * (1 - clamped)) {
+        VStack(spacing: 12) {
             HStack(spacing: 12) {
-                BrandMark(width: 44 - 14 * clamped)
+                BrandMark(width: 44)
                 Text(title)
-                    .font(.system(size: 28 - 6 * clamped, weight: .heavy, design: .rounded))
+                    .font(.system(size: 28, weight: .heavy, design: .rounded))
                 Spacer()
                 trailing
             }
 
-            if let searchText, clamped < 0.99 {
+            if let searchText {
                 HStack(spacing: 10) {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
@@ -49,59 +48,73 @@ struct BrandHeader<Trailing: View>: View {
                     }
                 }
                 .padding(.horizontal, 14)
-                .frame(height: 46 * (1 - clamped))
-                .background(.primary.opacity(0.06), in: Capsule())
-                .clipShape(Capsule())
-                .opacity(1 - clamped * 1.6)
+                .frame(height: 46)
+                .background(CuponColors.searchFill, in: Capsule())
             }
 
-            if let bottom, clamped < 0.99 {
+            if let bottom {
                 bottom
-                    .background {
-                        GeometryReader { geo in
-                            Color.clear
-                                .onAppear { bottomHeight = geo.size.height }
-                                .onChange(of: geo.size.height) { _, new in
-                                    if clamped == 0 { bottomHeight = new }
-                                }
-                        }
-                    }
-                    .frame(height: clamped > 0 && bottomHeight > 0
-                           ? max(bottomHeight * (1 - clamped), 0) : nil,
-                           alignment: .top)
-                    .clipped()
-                    .opacity(1 - clamped * 1.6)
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 14 - 4 * clamped)
+        .padding(.vertical, 14)
         .cuponGlass(cornerRadius: 26)
-        .padding(.horizontal, 12)
     }
 }
 
 extension BrandHeader where Trailing == EmptyView {
-    init(_ title: String, searchText: Binding<String>? = nil, collapse: CGFloat = 0,
-         bottom: AnyView? = nil) {
-        self.init(title: title, searchText: searchText, collapse: collapse,
-                  bottom: bottom) { EmptyView() }
+    init(_ title: String, searchText: Binding<String>? = nil, bottom: AnyView? = nil) {
+        self.init(title: title, searchText: searchText, bottom: bottom) { EmptyView() }
+    }
+}
+
+/// Barra compacta de cristal que se fija arriba y aparece al hacer scroll.
+/// Al ir en `.overlay` NO cambia los insets del scroll: nada de bucles ni
+/// atascos como con un `safeAreaInset` de altura variable.
+struct CompactHeaderBar<Trailing: View>: View {
+    let title: String
+    var collapse: ScrollCollapse
+    @ViewBuilder var trailing: Trailing
+
+    private var shown: CGFloat { min(max(collapse.value, 0), 1) }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            BrandMark(width: 30)
+            Text(title)
+                .font(.system(size: 20, weight: .heavy, design: .rounded))
+            Spacer()
+            trailing
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 9)
+        .cuponGlass(cornerRadius: 22)
+        .padding(.horizontal, 12)
+        .opacity(shown)
+        .allowsHitTesting(shown > 0.5)
+    }
+}
+
+extension CompactHeaderBar where Trailing == EmptyView {
+    init(_ title: String, collapse: ScrollCollapse) {
+        self.init(title: title, collapse: collapse) { EmptyView() }
     }
 }
 
 extension View {
-    /// Alimenta el colapso de `BrandHeader` desde el scroll (iOS 18+).
+    /// Alimenta el colapso desde el scroll (iOS 18+). Con la cabecera dentro del
+    /// scroll (sin safeAreaInset variable), `contentOffset.y + contentInsets.top`
+    /// es la distancia real desde arriba (0 en reposo) y el inset es constante.
     @ViewBuilder
-    func brandScrollTracking(_ collapse: Binding<CGFloat>) -> some View {
+    func brandScrollTracking(_ collapse: ScrollCollapse) -> some View {
         if #available(iOS 18.0, *) {
-            // `contentOffset.y + contentInsets.top` es la distancia real de
-            // scroll, independiente de que la cabecera (safeAreaInset) cambie de
-            // alto: en reposo siempre vale 0. El umbral evita micro-actualizaciones.
             onScrollGeometryChange(for: CGFloat.self) { geo in
                 geo.contentOffset.y + geo.contentInsets.top
             } action: { _, value in
-                let next = min(max(value / 70, 0), 1)
-                if abs(next - collapse.wrappedValue) > 0.01 {
-                    collapse.wrappedValue = next
+                // Aparece la barra compacta entre 40 y 110 pt de scroll.
+                let next = min(max((value - 40) / 70, 0), 1)
+                if abs(next - collapse.value) > 0.02 {
+                    collapse.value = next
                 }
             }
         } else {
