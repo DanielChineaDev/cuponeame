@@ -31,6 +31,7 @@ struct CouponListScreen: View {
     }
 
     @State private var headerCollapse = ScrollCollapse()
+    @State private var showProfile = false
 
     var body: some View {
         NavigationStack {
@@ -76,6 +77,9 @@ struct CouponListScreen: View {
             }
             .background(CuponColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $showProfile) {
+                ProfileSheet()
+            }
             .navigationDestination(for: String.self) { id in
                 CouponDetailScreen(couponID: id)
             }
@@ -91,8 +95,14 @@ struct CouponListScreen: View {
                     searchText: store.coupons.isEmpty ? nil : $searchText,
                     collapse: collapse,
                     bottom: store.coupons.isEmpty ? nil : AnyView(readyBar)) {
-            AvatarView(emoji: auth.avatar, size: 40)
-                .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+            Button {
+                showProfile = true
+            } label: {
+                AvatarView(emoji: auth.avatar, size: 40)
+                    .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Tu perfil")
         }
     }
 

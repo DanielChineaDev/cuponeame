@@ -39,6 +39,7 @@
 		91E4CE6A3D47FCB4184E1D4A /* DefaultCoupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F8361D40B5CF388F6A54A7 /* DefaultCoupons.swift */; };
 		949D3E5A987D16645D5899FD /* CouponListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC41F16556D0B44595C5FEC /* CouponListScreen.swift */; };
 		962F47119D92544C68A21FB8 /* BrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D01B4450CF560C17C69DCD1 /* BrandHeader.swift */; };
+		9EC3D3F2E60F12D5B3F2D528 /* ProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639329EFEE341B00DA83272B /* ProfileSheet.swift */; };
 		BB8B435A0E99457102C04E06 /* BrandForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41C6935FA9248314853F146 /* BrandForm.swift */; };
 		BCD2B200AF8D96BCCBB6D05A /* Coupon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */; };
 		C15DBA18782FEAB15E0A580D /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEDCE732AD977C8F4B8CD96 /* WelcomeScreen.swift */; };
@@ -112,6 +113,7 @@
 		5D5540A561267C36492F28C9 /* Cuponeame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cuponeame.entitlements; sourceTree = "<group>"; };
 		5FD0F4A73D6573C4EBF91B37 /* CouponTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponTemplate.swift; sourceTree = "<group>"; };
 		60CEB08952743CEE81949BFD /* CouponDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponDetailScreen.swift; sourceTree = "<group>"; };
+		639329EFEE341B00DA83272B /* ProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSheet.swift; sourceTree = "<group>"; };
 		63C76B8DDA449CE1D471D676 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		64DDD73DF983CD4B6A77B4BC /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		65E09B9053D017CB500BBD2E /* CuponeameUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CuponeameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -258,6 +260,7 @@
 			children = (
 				7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */,
 				A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */,
+				639329EFEE341B00DA83272B /* ProfileSheet.swift */,
 				9C454BA5FA164EB37DD4DA2C /* SettingsScreen.swift */,
 			);
 			path = Settings;
@@ -541,6 +544,7 @@
 				D245074063EAE927501399BF /* LoginSheet.swift in Sources */,
 				EE5A205E43DB34CD594E32A7 /* NotificationService.swift in Sources */,
 				161263598FD261B4E04A3A84 /* PartnerScreen.swift in Sources */,
+				9EC3D3F2E60F12D5B3F2D528 /* ProfileSheet.swift in Sources */,
 				4E8968B3816E7C4ECC3545EF /* Redemption.swift in Sources */,
 				8CE6F964374D099F705948EE /* RegisterSheet.swift in Sources */,
 				1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */,
