@@ -18,6 +18,16 @@ struct SettingsScreen: View {
 
     var body: some View {
         NavigationStack {
+            BrandHeaderScaffold(collapse: headerCollapse) {
+                settingsForm
+            } header: { collapse in
+                BrandHeader("Ajustes", collapse: collapse)
+            }
+            .toolbar(.hidden, for: .navigationBar)
+        }
+    }
+
+    private var settingsForm: some View {
             Form {
                 profileCard
 
@@ -141,10 +151,6 @@ struct SettingsScreen: View {
                 }
             }
             .brandScrollTracking(headerCollapse)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                BrandHeader("Ajustes", collapse: headerCollapse)
-            }
-            .toolbar(.hidden, for: .navigationBar)
             .task {
                 notifsEnabled = await NotificationService.shared.authorizationStatus() == .authorized
             }
@@ -182,7 +188,6 @@ struct SettingsScreen: View {
             } message: {
                 Text("Se borrarán tus cupones, tu historial y tu cuenta. Esta acción no se puede deshacer.")
             }
-        }
     }
 
     // MARK: - Cabecera y carnet

@@ -1,42 +1,75 @@
 import SwiftUI
 
 /// Progreso de contracción (0 = expandida, 1 = contraída) en un objeto
-/// observable: así el scroll solo re-dibuja la cabecera y NO la lista.
+/// observable: el scroll solo re-dibuja la cabecera, nunca la lista.
 @Observable
 final class ScrollCollapse {
     var value: CGFloat = 0
 }
 
-/// Cabecera de cristal que se CONTRAE al hacer scroll (patrón GasHeader): el
-/// mini ticket y el título encogen, y el buscador y el contenido inferior se
-/// pliegan hasta desaparecer. Se fija con `.safeAreaInset(.top)` y se alimenta
-/// con `.brandScrollTracking(_:)`.
-///
-/// Claves anti-fallos aprendidas:
-/// - El progreso vive en `collapse` (@Observable), no en @State de la pantalla
-///   → el scroll no re-renderiza la lista (si no, se congela).
-/// - Los sub-elementos NO se quitan de la jerarquía; solo interpolan su altura
-///   a 0 → el inset cambia de forma continua (si se quitan, se atasca).
-/// - Sin `.animation(value:)` interna → no realimenta el layout (colgaba).
+/// Andamiaje del patrón GasApp para cabeceras que se contraen SIN congelar el
+/// scroll: el hueco superior del scroll es de altura CONSTANTE (medida por una
+/// sonda invisible siempre expandida) y la cabecera viva se dibuja encima en
+/// un ZStack — al contraerse solo cambia visualmente, sin recolocar la lista.
+struct BrandHeaderScaffold<Content: View, Header: View>: View {
+    var collapse: ScrollCollapse
+    @ViewBuilder var content: () -> Content
+    /// Se llama con `nil` para la sonda (expandida) y con el objeto para la viva.
+    @ViewBuilder var header: (ScrollCollapse?) -> Header
+
+    @State private var headerHeight: CGFloat = 132
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            content()
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    Color.clear.frame(height: headerHeight)
+                }
+
+            // Sonda invisible: mide la altura real expandida, nada más.
+            header(nil)
+                .opacity(0)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+                .background {
+                    GeometryReader { geo in
+                        Color.clear
+                            .onAppear { report(geo.size) }
+                            .onChange(of: geo.size) { _, size in report(size) }
+                    }
+                }
+
+            header(collapse)
+        }
+    }
+
+    /// Solo medidas con ancho real: fuera de pantalla el layout es degenerado.
+    private func report(_ size: CGSize) {
+        guard size.width > 300, size.height > 60,
+              abs(size.height - headerHeight) > 1 else { return }
+        Task { @MainActor in headerHeight = size.height }
+    }
+}
+
+/// Cabecera de cristal que se contrae al hacer scroll: mini ticket, título y
+/// acciones encogen; el buscador y el contenido inferior se pliegan.
 struct BrandHeader<Trailing: View>: View {
     let title: String
     var searchText: Binding<String>? = nil
-    var collapse: ScrollCollapse
+    /// nil = siempre expandida (sonda del andamiaje).
+    var collapse: ScrollCollapse?
     var bottom: AnyView? = nil
     @ViewBuilder var trailing: Trailing
 
     @FocusState private var searchFocused: Bool
-    @State private var bottomHeight: CGFloat = 44
 
-    private var clamped: CGFloat { min(max(collapse.value, 0), 1) }
+    private var clamped: CGFloat { min(max(collapse?.value ?? 0, 0), 1) }
     private var expanded: CGFloat { 1 - clamped }
 
     var body: some View {
         VStack(spacing: 12 * expanded) {
             HStack(spacing: 12) {
                 BrandMark(width: 44)
-                    // scaleEffect (GPU) en vez de cambiar el frame: no recalcula
-                    // la forma ni la sombra en cada frame de scroll.
                     .scaleEffect(1 - 0.32 * clamped, anchor: .leading)
                     .frame(width: 44 * (1 - 0.32 * clamped), alignment: .leading)
                 Text(title)
@@ -75,7 +108,7 @@ struct BrandHeader<Trailing: View>: View {
 
             if let bottom {
                 bottom
-                    .frame(height: bottomHeight * expanded, alignment: .top)
+                    .frame(height: 20 * expanded, alignment: .top)
                     .clipped()
                     .opacity(expanded)
             }
@@ -84,11 +117,14 @@ struct BrandHeader<Trailing: View>: View {
         .padding(.vertical, 14 - 5 * clamped)
         .cuponGlass(cornerRadius: 26)
         .padding(.horizontal, 12)
+        // Segura aquí: la cabecera vive en un ZStack (overlay visual), su tamaño
+        // no toca los insets del scroll, así que no realimenta el layout.
+        .animation(.easeOut(duration: 0.15), value: clamped)
     }
 }
 
 extension BrandHeader where Trailing == EmptyView {
-    init(_ title: String, collapse: ScrollCollapse,
+    init(_ title: String, collapse: ScrollCollapse?,
          searchText: Binding<String>? = nil, bottom: AnyView? = nil) {
         self.init(title: title, searchText: searchText, collapse: collapse,
                   bottom: bottom) { EmptyView() }
@@ -96,20 +132,14 @@ extension BrandHeader where Trailing == EmptyView {
 }
 
 extension View {
-    /// Alimenta la contracción desde el scroll (iOS 18+). `contentOffset.y` es la
-    /// posición absoluta de scroll (no depende del alto de la cabecera), así que
-    /// no se realimenta al contraerse: la cabecera vuelve a expandir al subir.
+    /// Alimenta la contracción desde el scroll (iOS 18+), como gasScrollTracking.
     @ViewBuilder
     func brandScrollTracking(_ collapse: ScrollCollapse) -> some View {
         if #available(iOS 18.0, *) {
             onScrollGeometryChange(for: CGFloat.self) { geo in
                 geo.contentOffset.y + geo.contentInsets.top
             } action: { _, value in
-                // Se contrae entre 0 y 70 pt de scroll.
-                let next = min(max(value / 70, 0), 1)
-                if abs(next - collapse.value) > 0.01 {
-                    collapse.value = next
-                }
+                collapse.value = min(max(value / 70, 0), 1)
             }
         } else {
             self
