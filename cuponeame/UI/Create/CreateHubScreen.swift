@@ -13,21 +13,22 @@ struct CreateHubScreen: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    primaryCard
+            BrandHeaderScaffold(collapse: headerCollapse) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        primaryCard
 
-                    partnerCard
+                        partnerCard
 
-                    ideas
+                        ideas
+                    }
+                    .padding(16)
                 }
-                .padding(16)
+                .brandScrollTracking(headerCollapse)
+            } header: { collapse in
+                BrandHeader("Crear", collapse: collapse)
             }
-            .brandScrollTracking(headerCollapse)
             .background(CuponColors.background)
-            .safeAreaInset(edge: .top, spacing: 0) {
-                BrandHeader("Crear", collapse: headerCollapse)
-            }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Route.self) { route in
                 switch route {

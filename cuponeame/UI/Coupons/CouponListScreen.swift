@@ -34,44 +34,47 @@ struct CouponListScreen: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    if store.coupons.isEmpty {
-                        emptyState
-                            .padding(.top, 40)
-                    } else {
-                        filterChips
+            BrandHeaderScaffold(collapse: headerCollapse) {
+                ScrollView {
+                    VStack(spacing: 16) {
+                        if store.coupons.isEmpty {
+                            emptyState
+                                .padding(.top, 40)
+                        } else {
+                            filterChips
 
-                        LazyVStack(spacing: 20) {
-                            ForEach(filtered) { coupon in
-                                NavigationLink(value: coupon.id) {
-                                    CouponCard(coupon: coupon)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-
-                        if filtered.isEmpty {
-                            Group {
-                                if searchText.isEmpty {
-                                    ContentUnavailableView(
-                                        "Nada por aquí",
-                                        systemImage: "ticket",
-                                        description: Text("No hay cupones con este filtro."))
-                                } else {
-                                    ContentUnavailableView.search(text: searchText)
+                            LazyVStack(spacing: 20) {
+                                ForEach(filtered) { coupon in
+                                    NavigationLink(value: coupon.id) {
+                                        CouponCard(coupon: coupon)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
-                            .padding(.top, 60)
+
+                            if filtered.isEmpty {
+                                Group {
+                                    if searchText.isEmpty {
+                                        ContentUnavailableView(
+                                            "Nada por aquí",
+                                            systemImage: "ticket",
+                                            description: Text("No hay cupones con este filtro."))
+                                    } else {
+                                        ContentUnavailableView.search(text: searchText)
+                                    }
+                                }
+                                .padding(.top, 60)
+                            }
                         }
                     }
+                    .padding()
                 }
-                .padding()
+                .brandScrollTracking(headerCollapse)
+                .scrollDismissesKeyboard(.interactively)
+            } header: { collapse in
+                header(collapse: collapse)
             }
-            .brandScrollTracking(headerCollapse)
             .background(CuponColors.background)
-            .scrollDismissesKeyboard(.interactively)
-            .safeAreaInset(edge: .top, spacing: 0) { header }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 CouponDetailScreen(couponID: id)
@@ -83,10 +86,10 @@ struct CouponListScreen: View {
 
     private var ready: Int { store.coupons.filter { $0.canRedeem() }.count }
 
-    private var header: some View {
+    private func header(collapse: ScrollCollapse?) -> some View {
         BrandHeader(title: "Cupones",
                     searchText: store.coupons.isEmpty ? nil : $searchText,
-                    collapse: headerCollapse,
+                    collapse: collapse,
                     bottom: store.coupons.isEmpty ? nil : AnyView(readyBar)) {
             AvatarView(emoji: auth.avatar, size: 40)
                 .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
