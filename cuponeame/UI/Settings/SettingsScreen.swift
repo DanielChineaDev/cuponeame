@@ -19,12 +19,6 @@ struct SettingsScreen: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    BrandHeader("Ajustes")
-                }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
-
                 profileCard
 
                 Section("Pareja") {
@@ -147,8 +141,8 @@ struct SettingsScreen: View {
                 }
             }
             .brandScrollTracking(headerCollapse)
-            .overlay(alignment: .top) {
-                CompactHeaderBar("Ajustes", collapse: headerCollapse)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                BrandHeader("Ajustes", collapse: headerCollapse)
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {

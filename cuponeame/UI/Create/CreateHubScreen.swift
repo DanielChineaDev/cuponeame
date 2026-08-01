@@ -15,8 +15,6 @@ struct CreateHubScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    BrandHeader("Crear")
-
                     primaryCard
 
                     partnerCard
@@ -27,8 +25,8 @@ struct CreateHubScreen: View {
             }
             .brandScrollTracking(headerCollapse)
             .background(CuponColors.background)
-            .overlay(alignment: .top) {
-                CompactHeaderBar("Crear", collapse: headerCollapse)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                BrandHeader("Crear", collapse: headerCollapse)
             }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Route.self) { route in
