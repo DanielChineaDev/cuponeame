@@ -66,6 +66,15 @@ final class PartnerDemoTests: XCTestCase {
         XCTAssertNotNil(auth.errorMessage)
     }
 
+    func testDemoPartnerAvatar() async {
+        let auth = makeDemoAuth()
+        let before = await auth.fetchPartnerAvatar()
+        XCTAssertNil(before, "Sin vínculo no hay avatar de pareja")
+        await auth.redeemInviteCode("AMAR26")
+        let after = await auth.fetchPartnerAvatar()
+        XCTAssertNotNil(after)
+    }
+
     func testDemoUnlinkClearsPartner() async {
         let auth = makeDemoAuth()
         await auth.redeemInviteCode("AMAR26")

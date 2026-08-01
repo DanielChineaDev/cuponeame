@@ -37,8 +37,8 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 | <img src="docs/capturas/login.png" width="230" /> | <img src="docs/capturas/registro.png" width="230" /> |
 | **Modo pareja** | **Modo oscuro** |
 | <img src="docs/capturas/pareja.png" width="230" /> | <img src="docs/capturas/oscuro.png" width="230" /> |
-| **Widget** | |
-| <img src="docs/capturas/widget.png" width="230" /> | |
+| **Widget** | **Perfil** |
+| <img src="docs/capturas/widget.png" width="230" /> | <img src="docs/capturas/perfil.png" width="230" /> |
 
 <sub>Identidad rediseñada: logo vectorial de ticket (el mismo del AppIcon), tema Sistema/Claro/Oscuro y widget «Próximo cupón».</sub>
 
@@ -51,6 +51,7 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 - 💑 **Modo pareja**: vincula dos cuentas con un **código de invitación** (6 caracteres, compartible por cualquier app) y **regalaos cupones** el uno al otro — desde Crear ("Para X 💝") o desde el detalle ("Regalar a X"). Los regalos llegan firmados con el chip "De X" y disparan el aviso **"💝 ¡Regalo de X!"** en vivo gracias a los listeners.
 - 🧩 **Widget** "Próximo cupón" (WidgetKit small/medium): el siguiente cupón canjeable y el contador de disponibles, alimentado por un snapshot en el App Group — sin tocar Firebase desde el widget.
 - 🧑‍🎨 **Avatares personalizables**: 20 emojis sobre gradiente de marca (o el pingu clásico), sincronizados en el perfil.
+- 👤 **Perfil de usuario** (tocando tu avatar en Cupones): tus datos, resumen y **con quién estás conectado** — los dos avatares unidos por un corazón, con acceso directo a gestionar el vínculo o vincularte si aún no lo estás.
 - 🎟️ **Cupones canjeables** con foto a sangre, chips blancos y anillo de usos restantes.
 - ⏳ **Tiempo de espera real** entre canjeos, con cuenta atrás en vivo sobre el botón de canjear.
 - 🧮 **Límite de usos** por cupón; al agotarse, la tarjeta pasa a escala de grises.
