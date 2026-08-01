@@ -73,7 +73,7 @@ struct SettingsScreen: View {
                     Toggle(isOn: $notifsEnabled) {
                         SettingRow(icon: "bell.fill", tint: .red,
                                    title: "Avisos",
-                                   subtitle: "Regalos que recibes y cupones disponibles")
+                                   subtitle: "Regalos y cupones disponibles")
                     }
                     .tint(CuponColors.brandPink)
                 } header: {
@@ -297,6 +297,8 @@ struct SettingRow: View {
                     Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(CuponColors.subtleText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
             }
         }

@@ -37,8 +37,6 @@ struct ProfileSheet: View {
                 partnerAvatar = await auth.fetchPartnerAvatar()
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 
     // MARK: - Identidad

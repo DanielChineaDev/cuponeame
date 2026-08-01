@@ -237,10 +237,10 @@ final class AuthService {
         }
     }
 
-    /// Avatar (emoji) de la pareja, leído de su perfil; nil = pingu clásico.
+    /// Avatar de la pareja, leído de su perfil; nil = pingu clásico.
     func fetchPartnerAvatar() async -> String? {
         if isDemoMode {
-            return partnerUID == nil ? nil : "🐰"
+            return partnerUID == nil ? nil : "avatar_hare"
         }
         guard let partnerUID else { return nil }
         let document = try? await db.collection("users").document(partnerUID).getDocument()
