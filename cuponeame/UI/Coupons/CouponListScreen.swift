@@ -36,8 +36,6 @@ struct CouponListScreen: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    header
-
                     if store.coupons.isEmpty {
                         emptyState
                             .padding(.top, 40)
@@ -73,12 +71,7 @@ struct CouponListScreen: View {
             .brandScrollTracking(headerCollapse)
             .background(CuponColors.background)
             .scrollDismissesKeyboard(.interactively)
-            .overlay(alignment: .top) {
-                CompactHeaderBar(title: "Cupones", collapse: headerCollapse) {
-                    AvatarView(emoji: auth.avatar, size: 30)
-                        .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 1.5))
-                }
-            }
+            .safeAreaInset(edge: .top, spacing: 0) { header }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { id in
                 CouponDetailScreen(couponID: id)
@@ -93,6 +86,7 @@ struct CouponListScreen: View {
     private var header: some View {
         BrandHeader(title: "Cupones",
                     searchText: store.coupons.isEmpty ? nil : $searchText,
+                    collapse: headerCollapse,
                     bottom: store.coupons.isEmpty ? nil : AnyView(readyBar)) {
             AvatarView(emoji: auth.avatar, size: 40)
                 .overlay(Circle().stroke(CuponColors.brandStroke, lineWidth: 2))
