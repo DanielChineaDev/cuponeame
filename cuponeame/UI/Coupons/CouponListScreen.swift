@@ -30,6 +30,10 @@ struct CouponListScreen: View {
         }
     }
 
+    /// Los que aún tienen usos, en su orden; los agotados se van al final.
+    private var active: [Coupon] { filtered.filter { !$0.isExhausted } }
+    private var exhausted: [Coupon] { filtered.filter(\.isExhausted) }
+
     @State private var headerCollapse = ScrollCollapse()
     @State private var showProfile = false
 
@@ -45,11 +49,31 @@ struct CouponListScreen: View {
                             filterChips
 
                             LazyVStack(spacing: 20) {
-                                ForEach(filtered) { coupon in
+                                ForEach(active) { coupon in
                                     NavigationLink(value: coupon.id) {
                                         CouponCard(coupon: coupon)
                                     }
                                     .buttonStyle(.plain)
+                                }
+
+                                if !exhausted.isEmpty {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "nosign")
+                                            .font(.caption)
+                                        Text("AGOTADOS")
+                                            .font(.footnote.weight(.semibold))
+                                        Spacer()
+                                    }
+                                    .foregroundStyle(CuponColors.subtleText)
+                                    .padding(.leading, 6)
+                                    .padding(.top, 8)
+
+                                    ForEach(exhausted) { coupon in
+                                        NavigationLink(value: coupon.id) {
+                                            CouponCard(coupon: coupon)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
 
@@ -77,7 +101,7 @@ struct CouponListScreen: View {
             }
             .background(CuponColors.background)
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showProfile) {
+            .fullScreenCover(isPresented: $showProfile) {
                 ProfileSheet()
             }
             .navigationDestination(for: String.self) { id in
