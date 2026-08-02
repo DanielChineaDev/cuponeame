@@ -77,6 +77,10 @@ enum AppConfig {
         infoString("ADMOB_REWARDED_UNIT") ?? "ca-app-pub-3940256099942544/1712485313"
     }
 
+    static var admobBannerUnit: String {
+        infoString("ADMOB_BANNER_UNIT") ?? "ca-app-pub-3940256099942544/2934735716"
+    }
+
     private static func infoString(_ key: String) -> String? {
         guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String,
               !value.isEmpty, value.hasPrefix("ca-app-pub") else { return nil }

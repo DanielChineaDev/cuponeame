@@ -26,6 +26,7 @@ struct SettingsScreen: View {
                 BrandHeader("Ajustes", collapse: collapse)
             }
             .toolbar(.hidden, for: .navigationBar)
+            .activateBannerSlot(.settings)
         }
     }
 
@@ -143,6 +144,13 @@ struct SettingsScreen: View {
                         SettingRow(icon: "envelope.fill", tint: .blue, title: "Enviar una sugerencia")
                     }
                 }
+
+                Section {
+                    BannerSlotView(slot: .settings)
+                        .frame(maxWidth: .infinity)
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
 
                 Section("Acerca de") {
                     LabeledContent("Versión", value: AppConfig.version)
