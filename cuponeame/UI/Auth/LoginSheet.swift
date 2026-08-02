@@ -98,6 +98,8 @@ struct LoginSheet: View {
                     .disabled(!canSubmit)
                     .opacity(canSubmit ? 1 : 0.6)
                     .padding(.top, 6)
+
+                    SocialAuthButtons()
                 }
                 .padding(20)
             }

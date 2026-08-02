@@ -13,6 +13,7 @@
 		1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B76E6044523884B7E12658 /* RootView.swift */; };
 		1F94D04831F1167D010F9D14 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F01293DABC2D4E0ECAFEA2F /* FirebaseFirestore */; };
 		24DB3624FECD637285398294 /* HistoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */; };
+		264D0AAAE8B3B734D218AB57 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3E5594D1811E8B4603599FB /* GoogleSignIn */; };
 		2F1B537330B776D7F23ABE32 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D2F85147AB3640D2D26C90 /* WidgetSnapshot.swift */; };
 		2F2CE6A635F03E8A1D941FE2 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8B2E5114DF596DE537FD83 /* AuthService.swift */; };
 		38C96698DBE65C43DE8C2BD8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0D74A13B930A919375FD3E /* Theme.swift */; };
@@ -26,11 +27,13 @@
 		59981C114092FBBAD57EA7EE /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73917093D99362FC93F7AAFA /* AvatarView.swift */; };
 		5AD3A57E851A92149F21EDFC /* WidgetSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E7A270EE58160D7C48B6DC /* WidgetSnapshotTests.swift */; };
 		5E4ED441D4E0DC98672ACC53 /* Glass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E31F2A9281607C3CFD5CD3 /* Glass.swift */; };
-		5F812D60A84984AFFBBDED38 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6A1D028B2AF5B35E82B8FF0A /* Kingfisher */; };
+		5F812D60A84984AFFBBDED38 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 4B775A749DC9E18DDB2129AB /* FirebaseMessaging */; };
 		670D43DAF5B9E1B9E5D6055E /* CouponFormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EB6DB1254CD494027E0E95 /* CouponFormScreen.swift */; };
 		6DD76FD3E72F1FC1F3734723 /* CuponeameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CCF887163FD6570F2225A4 /* CuponeameApp.swift */; };
 		77EC2B141490BBF6143532AE /* BrandLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8560EAFD4623D38D402BD303 /* BrandLogo.swift */; };
 		78CC2297DD857B9BCFA311DB /* CouponTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD0F4A73D6573C4EBF91B37 /* CouponTemplate.swift */; };
+		79F502649017DB05265AB24F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6A1D028B2AF5B35E82B8FF0A /* Kingfisher */; };
+		7A3A4998FF53A98EDAF42A46 /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B097040FF334AC7A7C17803C /* PushService.swift */; };
 		7D03A9B16C17A3E4BC9209A0 /* cuponeameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CEF014CE762DC305BB9415 /* cuponeameUITests.swift */; };
 		86214E90843E35DED4EEA6E5 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 987D98795DA8EDB8FC830BD9 /* FirebaseAuth */; };
 		8B7156DA6E0027161CE7A4F2 /* CouponImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F73E7AFC153A1829E2BAD45 /* CouponImageView.swift */; };
@@ -39,6 +42,7 @@
 		91E4CE6A3D47FCB4184E1D4A /* DefaultCoupons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F8361D40B5CF388F6A54A7 /* DefaultCoupons.swift */; };
 		949D3E5A987D16645D5899FD /* CouponListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC41F16556D0B44595C5FEC /* CouponListScreen.swift */; };
 		962F47119D92544C68A21FB8 /* BrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D01B4450CF560C17C69DCD1 /* BrandHeader.swift */; };
+		9BD27D4E202F26D081F7AAD5 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 71BCFDDAABCA37DBB08B2473 /* GoogleSignInSwift */; };
 		9EC3D3F2E60F12D5B3F2D528 /* ProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639329EFEE341B00DA83272B /* ProfileSheet.swift */; };
 		BB8B435A0E99457102C04E06 /* BrandForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41C6935FA9248314853F146 /* BrandForm.swift */; };
 		BCD2B200AF8D96BCCBB6D05A /* Coupon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */; };
@@ -119,6 +123,7 @@
 		65E09B9053D017CB500BBD2E /* CuponeameUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CuponeameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73917093D99362FC93F7AAFA /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryScreen.swift; sourceTree = "<group>"; };
+		794FE4004E8E22A17D4B3DDE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		7BEDCE732AD977C8F4B8CD96 /* WelcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
 		7F73E7AFC153A1829E2BAD45 /* CouponImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponImageView.swift; sourceTree = "<group>"; };
 		830EB05F5FF68661951E8AA9 /* CouponCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponCard.swift; sourceTree = "<group>"; };
@@ -131,6 +136,7 @@
 		9D690655EB5330A7B45B9249 /* CouponTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponTests.swift; sourceTree = "<group>"; };
 		A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartnerScreen.swift; sourceTree = "<group>"; };
 		AD8B2E5114DF596DE537FD83 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		B097040FF334AC7A7C17803C /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
 		BB008774A016E4DBEAFF175B /* RegisterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterSheet.swift; sourceTree = "<group>"; };
 		C97DD9E491249FE1D96B36CD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CBD24DC3A579E08F21EE65EF /* CouponStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponStore.swift; sourceTree = "<group>"; };
@@ -154,7 +160,10 @@
 				86214E90843E35DED4EEA6E5 /* FirebaseAuth in Frameworks */,
 				1F94D04831F1167D010F9D14 /* FirebaseFirestore in Frameworks */,
 				43A2A63D7ADC54CC0F38B1D4 /* FirebaseStorage in Frameworks */,
-				5F812D60A84984AFFBBDED38 /* Kingfisher in Frameworks */,
+				5F812D60A84984AFFBBDED38 /* FirebaseMessaging in Frameworks */,
+				79F502649017DB05265AB24F /* Kingfisher in Frameworks */,
+				264D0AAAE8B3B734D218AB57 /* GoogleSignIn in Frameworks */,
+				9BD27D4E202F26D081F7AAD5 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +204,14 @@
 			path = CuponWidget;
 			sourceTree = "<group>";
 		};
+		231947772C2C0CE89C10CB48 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				794FE4004E8E22A17D4B3DDE /* Secrets.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		258189C203AC12D64135CE00 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
@@ -231,6 +248,7 @@
 				CBD24DC3A579E08F21EE65EF /* CouponStore.swift */,
 				64DDD73DF983CD4B6A77B4BC /* ImageService.swift */,
 				29A4F064A1B0058A4BB2F382 /* NotificationService.swift */,
+				B097040FF334AC7A7C17803C /* PushService.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -360,6 +378,7 @@
 		FE421296B828C93B66905A02 = {
 			isa = PBXGroup;
 			children = (
+				231947772C2C0CE89C10CB48 /* Config */,
 				A048BE0ECBA0B1006A354464 /* cuponeame */,
 				F998D2B777EB74A694306C84 /* cuponeameTests */,
 				4135E0AF8937F78B09DDFB46 /* cuponeameUITests */,
@@ -426,7 +445,10 @@
 				987D98795DA8EDB8FC830BD9 /* FirebaseAuth */,
 				8F01293DABC2D4E0ECAFEA2F /* FirebaseFirestore */,
 				98639F82699CB703FA15FA56 /* FirebaseStorage */,
+				4B775A749DC9E18DDB2129AB /* FirebaseMessaging */,
 				6A1D028B2AF5B35E82B8FF0A /* Kingfisher */,
+				D3E5594D1811E8B4603599FB /* GoogleSignIn */,
+				71BCFDDAABCA37DBB08B2473 /* GoogleSignInSwift */,
 			);
 			productName = Cuponeame;
 			productReference = 1C75075815E5F9C4F458ECF2 /* Cuponeame.app */;
@@ -488,6 +510,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				BC03B2086B747AEFB52E33A4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				A02EA85B69FCE25B6B0733F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				74CA4435CB3787B992CF2640 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -545,6 +568,7 @@
 				EE5A205E43DB34CD594E32A7 /* NotificationService.swift in Sources */,
 				161263598FD261B4E04A3A84 /* PartnerScreen.swift in Sources */,
 				9EC3D3F2E60F12D5B3F2D528 /* ProfileSheet.swift in Sources */,
+				7A3A4998FF53A98EDAF42A46 /* PushService.swift in Sources */,
 				4E8968B3816E7C4ECC3545EF /* Redemption.swift in Sources */,
 				8CE6F964374D099F705948EE /* RegisterSheet.swift in Sources */,
 				1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */,
@@ -673,6 +697,7 @@
 		};
 		B59359CD5BE1B41F0EF07FA1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 794FE4004E8E22A17D4B3DDE /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -785,6 +810,7 @@
 		};
 		E7B89F13A9C31A3FD47A4A28 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 794FE4004E8E22A17D4B3DDE /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -927,6 +953,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		A02EA85B69FCE25B6B0733F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		BC03B2086B747AEFB52E33A4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -938,10 +972,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4B775A749DC9E18DDB2129AB /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BC03B2086B747AEFB52E33A4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
 		6A1D028B2AF5B35E82B8FF0A /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 74CA4435CB3787B992CF2640 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		71BCFDDAABCA37DBB08B2473 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A02EA85B69FCE25B6B0733F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 		8F01293DABC2D4E0ECAFEA2F /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -957,6 +1001,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BC03B2086B747AEFB52E33A4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		D3E5594D1811E8B4603599FB /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A02EA85B69FCE25B6B0733F6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -160,6 +160,9 @@ struct SettingsScreen: View {
                     let granted = await NotificationService.shared.requestPermission()
                     notifsEnabled = granted
                     notifsDenied = !granted
+                    if granted {
+                        PushService.shared.registerForRemote()
+                    }
                 }
             }
             .sheet(isPresented: $showAvatarPicker) {

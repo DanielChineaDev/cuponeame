@@ -35,6 +35,62 @@ struct AuthHeader: View {
     }
 }
 
+/// Botones de Google y Apple con separador, para login y registro.
+struct SocialAuthButtons: View {
+    @Environment(AuthService.self) private var auth
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 10) {
+                divider
+                Text("o continúa con")
+                    .font(.footnote)
+                    .foregroundStyle(CuponColors.subtleText)
+                    .fixedSize()
+                divider
+            }
+            .padding(.vertical, 2)
+
+            Button {
+                Task { await auth.signInWithApple() }
+            } label: {
+                Label("Continuar con Apple", systemImage: "apple.logo")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+            }
+            .buttonStyle(.plain)
+            .background(colorScheme == .dark ? .white : .black, in: Capsule())
+            .foregroundStyle(colorScheme == .dark ? .black : .white)
+
+            Button {
+                Task { await auth.signInWithGoogle() }
+            } label: {
+                HStack(spacing: 8) {
+                    Text("G")
+                        .font(.headline.weight(.heavy))
+                        .foregroundStyle(CuponColors.brandStroke)
+                    Text("Continuar con Google")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+            }
+            .buttonStyle(.plain)
+            .background(CuponColors.surface, in: Capsule())
+            .overlay(Capsule().stroke(CuponColors.subtleText.opacity(0.3), lineWidth: 1))
+        }
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(CuponColors.subtleText.opacity(0.25))
+            .frame(height: 1)
+    }
+}
+
 /// Campo con icono sobre superficie redondeada.
 struct AuthField<Field: View>: View {
     let icon: String

@@ -6,6 +6,10 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
+configFiles:
+  Debug: Config/Secrets.xcconfig
+  Release: Config/Secrets.xcconfig
+
 settings:
   base:
     SWIFT_VERSION: "5.10"
@@ -21,6 +25,9 @@ packages:
     from: 12.0.0
   Kingfisher:
     url: https://github.com/onevcat/Kingfisher.git
+    from: 8.0.0
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
     from: 8.0.0
 
 targets:
@@ -47,6 +54,11 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
+        CFBundleURLTypes:
+          - CFBundleURLSchemes:
+              - $(GID_REVERSED_CLIENT_ID)
+        UIBackgroundModes:
+          - remote-notification
     dependencies:
       - package: Firebase
         product: FirebaseAuth
@@ -54,7 +66,13 @@ targets:
         product: FirebaseFirestore
       - package: Firebase
         product: FirebaseStorage
+      - package: Firebase
+        product: FirebaseMessaging
       - package: Kingfisher
+      - package: GoogleSignIn
+        product: GoogleSignIn
+      - package: GoogleSignIn
+        product: GoogleSignInSwift
       - target: CuponWidget
         embed: true
 

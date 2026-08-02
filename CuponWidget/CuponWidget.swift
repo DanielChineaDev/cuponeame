@@ -15,7 +15,8 @@ struct CuponWidget: Widget {
         }
         .configurationDisplayName("Próximo cupón")
         .description("El siguiente cupón listo para canjear.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemSmall, .systemMedium,
+                            .accessoryCircular, .accessoryRectangular])
     }
 }
 
@@ -60,9 +61,37 @@ struct CuponWidgetView: View {
         endPoint: .bottomTrailing)
 
     var body: some View {
-        content
-            .foregroundStyle(.white)
-            .containerBackground(for: .widget) { brand }
+        switch family {
+        case .accessoryCircular:
+            // Pantalla de bloqueo: anillo con los cupones disponibles.
+            Gauge(value: Double(entry.snapshot.available),
+                  in: 0...Double(max(entry.snapshot.total, 1))) {
+                Image(systemName: "ticket.fill")
+            } currentValueLabel: {
+                Text("\(entry.snapshot.available)")
+                    .font(.headline.bold())
+            }
+            .gaugeStyle(.accessoryCircularCapacity)
+            .containerBackground(for: .widget) { Color.clear }
+
+        case .accessoryRectangular:
+            VStack(alignment: .leading, spacing: 2) {
+                Label("Próximo cupón", systemImage: "ticket.fill")
+                    .font(.caption2)
+                Text(entry.snapshot.next?.title ?? "Nada que canjear")
+                    .font(.headline)
+                    .lineLimit(1)
+                Text("\(entry.snapshot.available) de \(entry.snapshot.total) disponibles")
+                    .font(.caption2)
+                    .opacity(0.8)
+            }
+            .containerBackground(for: .widget) { Color.clear }
+
+        default:
+            content
+                .foregroundStyle(.white)
+                .containerBackground(for: .widget) { brand }
+        }
     }
 
     @ViewBuilder
