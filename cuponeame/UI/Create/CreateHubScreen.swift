@@ -5,8 +5,12 @@ import SwiftUI
 /// rápidas que prellenan el formulario.
 struct CreateHubScreen: View {
     @Environment(AuthService.self) private var auth
+    @Environment(MonetizationStore.self) private var monetization
+    @Environment(AdsManager.self) private var ads
 
     @State private var headerCollapse = ScrollCollapse()
+    @State private var showPremium = false
+    @State private var rewardMessage: String?
 
     private let ideaColumns = [GridItem(.flexible(), spacing: 12),
                                GridItem(.flexible(), spacing: 12)]
@@ -17,6 +21,8 @@ struct CreateHubScreen: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         primaryCard
+
+                        quotaCard
 
                         partnerCard
 
@@ -30,6 +36,14 @@ struct CreateHubScreen: View {
             }
             .background(CuponColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .fullScreenCover(isPresented: $showPremium) {
+                PremiumSheet()
+            }
+            .alert(rewardMessage ?? "", isPresented: Binding(
+                get: { rewardMessage != nil },
+                set: { if !$0 { rewardMessage = nil } })) {
+                Button("Genial") { rewardMessage = nil }
+            }
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .blank:
@@ -40,6 +54,74 @@ struct CreateHubScreen: View {
                     CouponFormScreen(mode: .create, template: CouponTemplate.all[index])
                 }
             }
+        }
+    }
+
+    // MARK: - Cuota mensual
+
+    /// Cuántos cupones quedan este mes, con las dos salidas cuando se agota:
+    /// ver un anuncio bonificado (+3) o pasarse a premium (ilimitado).
+    @ViewBuilder
+    private var quotaCard: some View {
+        if !monetization.isPremium {
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    Image(systemName: monetization.canCreate ? "ticket.fill" : "hourglass")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 44, height: 44)
+                        .background(CuponColors.brandStroke, in: RoundedRectangle(cornerRadius: 14))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(monetization.quotaLabel)
+                            .font(.headline)
+                        Text(monetization.canCreate
+                             ? "La cuota se renueva cada mes."
+                             : "Consigue más viendo un anuncio o hazte premium.")
+                            .font(.subheadline)
+                            .foregroundStyle(CuponColors.subtleText)
+                    }
+                    Spacer()
+                }
+
+                if !monetization.canCreate {
+                    Button {
+                        Task {
+                            if await ads.showRewarded() {
+                                monetization.grantReward()
+                                rewardMessage = "¡+\(MonetizationStore.rewardBonus) cupones para este mes!"
+                            }
+                        }
+                    } label: {
+                        Label("Ver un anuncio · +\(MonetizationStore.rewardBonus) cupones",
+                              systemImage: "play.rectangle.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(CuponColors.background, in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!ads.rewardedReady)
+                    .opacity(ads.rewardedReady ? 1 : 0.5)
+                }
+
+                Button {
+                    showPremium = true
+                } label: {
+                    Label("Cupones ilimitados y sin anuncios", systemImage: "infinity")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(CuponColors.brandStroke, in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(16)
+            .background(CuponColors.surface, in: RoundedRectangle(cornerRadius: 20))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(CuponColors.brandPurple.opacity(0.1), lineWidth: 1))
         }
     }
 

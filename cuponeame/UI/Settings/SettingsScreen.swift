@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsScreen: View {
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
+    @Environment(MonetizationStore.self) private var monetization
 
     @AppStorage("appTheme") private var themeRaw = AppTheme.system.rawValue
     @AppStorage("notifsEnabled") private var notifsEnabled = false
@@ -12,6 +13,7 @@ struct SettingsScreen: View {
     @State private var showDeleteConfirmation = false
     @State private var showPackConfirmation = false
     @State private var showAvatarPicker = false
+    @State private var showPremium = false
     @State private var passwordResetSent = false
     @State private var notifsDenied = false
     @State private var headerCollapse = ScrollCollapse()
@@ -30,6 +32,21 @@ struct SettingsScreen: View {
     private var settingsForm: some View {
             Form {
                 profileCard
+
+                Section {
+                    Button {
+                        showPremium = true
+                    } label: {
+                        SettingRow(icon: monetization.isPremium ? "checkmark.seal.fill" : "infinity",
+                                   tint: CuponColors.brandPurple,
+                                   title: monetization.isPremium ? "Eres premium" : "Cuponéame Premium",
+                                   subtitle: monetization.isPremium
+                                       ? "Sin anuncios y cupones ilimitados"
+                                       : monetization.quotaLabel)
+                    }
+                } header: {
+                    Text("Premium")
+                }
 
                 Section("Pareja") {
                     NavigationLink {
@@ -167,6 +184,9 @@ struct SettingsScreen: View {
             }
             .sheet(isPresented: $showAvatarPicker) {
                 AvatarPickerSheet()
+            }
+            .fullScreenCover(isPresented: $showPremium) {
+                PremiumSheet()
             }
             .alert("Cambiar nombre", isPresented: $showNameEditor) {
                 TextField("Nombre", text: $newName)

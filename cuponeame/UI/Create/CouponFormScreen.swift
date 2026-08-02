@@ -16,6 +16,7 @@ struct CouponFormScreen: View {
 
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
+    @Environment(MonetizationStore.self) private var monetization
     @Environment(\.dismiss) private var dismiss
 
     @State private var title = ""
@@ -56,6 +57,7 @@ struct CouponFormScreen: View {
 
     private var canSave: Bool {
         !title.trimmingCharacters(in: .whitespaces).isEmpty && !isSaving
+            && (isEditing || monetization.canCreate)
     }
 
     /// El ticket tal y como quedará: se pinta arriba y se refresca al escribir.
@@ -353,6 +355,11 @@ struct CouponFormScreen: View {
 
         switch mode {
         case .create:
+            // La cuota se descuenta justo antes de escribir (premium = ilimitado).
+            guard monetization.consumeCreation() else {
+                saveError = "Has usado tus \(MonetizationStore.monthlyQuota) cupones de este mes. Consigue más viendo un anuncio o hazte premium."
+                return
+            }
             let coupon = Coupon(
                 title: title,
                 category: category.rawValue,

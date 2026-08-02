@@ -51,6 +51,7 @@ App iOS nativa de cupones canjeables entre parejas: crea cupones personalizados 
 - 💑 **Modo pareja**: vincula dos cuentas con un **código de invitación** (6 caracteres, compartible por cualquier app) y **regalaos cupones** el uno al otro — desde Crear ("Para X 💝") o desde el detalle ("Regalar a X"). Los regalos llegan firmados con el chip "De X" y disparan el aviso **"💝 ¡Regalo de X!"** en vivo gracias a los listeners.
 - 🧩 **Widget** "Próximo cupón" (WidgetKit small/medium): el siguiente cupón canjeable y el contador de disponibles, alimentado por un snapshot en el App Group — sin tocar Firebase desde el widget.
 - 🧑‍🎨 **Avatares personalizables**: 20 emojis sobre gradiente de marca (o el pingu clásico), sincronizados en el perfil.
+- 💎 **Monetización**: intersticial cada 3 cupones abiertos, **5 creaciones al mes** recargables con un **anuncio bonificado** (+3), y **Premium** de pago único (StoreKit 2) que quita los anuncios y da **cupones ilimitados**.
 - 👤 **Perfil de usuario** (tocando tu avatar en Cupones): tus datos, resumen y **con quién estás conectado** — los dos avatares unidos por un corazón, con acceso directo a gestionar el vínculo o vincularte si aún no lo estás.
 - 🎟️ **Cupones canjeables** con foto a sangre, chips blancos y anillo de usos restantes.
 - ⏳ **Tiempo de espera real** entre canjeos, con cuenta atrás en vivo sobre el botón de canjear.
@@ -157,6 +158,15 @@ La app ya lleva todo el código; falta activar los servicios:
 cd functions && npm install && cd .. && firebase deploy --only functions
 ```
 
+5. **Monetización**: en [AdMob](https://apps.admob.com) crear la app y las unidades *intersticial* y *bonificado*, y ponerlas en `Config/Secrets.xcconfig` (`ADMOB_APP_ID`, `ADMOB_INTERSTITIAL_UNIT`, `ADMOB_REWARDED_UNIT`) — por defecto van los IDs de prueba de Google. En App Store Connect, crear el producto **no consumible** `com.bpo.cuponeame.premium` (sin él, el botón de compra aparece atenuado).
+
+| Regla | Valor |
+|---|---|
+| Intersticial | Cada **3** aperturas de cupón (mínimo 45 s entre anuncios) |
+| Cuota de creación | **5** cupones por mes natural |
+| Anuncio bonificado | **+3** creaciones (caducan al cambiar de mes) |
+| Premium | Pago único: sin anuncios + creaciones ilimitadas |
+
 ---
 
 ## 🗺️ Roadmap
@@ -175,6 +185,7 @@ cd functions && npm install && cd .. && firebase deploy --only functions
 - [x] Push remota (FCM + Cloud Functions en `functions/`): regalos y canjes con la app cerrada — falta activar APNs/Blaze en consolas
 - [x] Sign in with Apple y Google (falta habilitar los proveedores en Firebase Console)
 - [x] Widgets de pantalla de bloqueo (circular y rectangular)
+- [x] Monetización: intersticial cada 3 cupones, cuota mensual con anuncio bonificado y Premium de pago único
 
 ---
 
