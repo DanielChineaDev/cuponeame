@@ -4,6 +4,7 @@ struct SettingsScreen: View {
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
     @Environment(MonetizationStore.self) private var monetization
+    @Environment(AdsManager.self) private var ads
 
     @AppStorage("appTheme") private var themeRaw = AppTheme.system.rawValue
     @AppStorage("notifsEnabled") private var notifsEnabled = false
@@ -151,6 +152,25 @@ struct SettingsScreen: View {
                 }
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
+
+                Section("Legal") {
+                    Link(destination: AppConfig.privacyPolicyURL) {
+                        SettingRow(icon: "hand.raised.fill", tint: .gray,
+                                   title: "Política de privacidad")
+                    }
+                    Link(destination: AppConfig.termsURL) {
+                        SettingRow(icon: "doc.text.fill", tint: .gray,
+                                   title: "Términos de uso")
+                    }
+                    if !monetization.isPremium, ads.privacyOptionsRequired {
+                        Button {
+                            Task { await ads.presentPrivacyOptions() }
+                        } label: {
+                            SettingRow(icon: "checkerboard.shield", tint: .gray,
+                                       title: "Privacidad de anuncios")
+                        }
+                    }
+                }
 
                 Section("Acerca de") {
                     LabeledContent("Versión", value: AppConfig.version)

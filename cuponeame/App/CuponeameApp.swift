@@ -66,6 +66,10 @@ enum AppConfig {
     /// Compra única que quita anuncios y desbloquea cupones ilimitados.
     static let premiumProductId = "com.bpo.cuponeame.premium"
 
+    // Documentos legales (los mismos que se declaran en App Store Connect).
+    static let privacyPolicyURL = URL(string: "https://github.com/DanielChineaDev/cuponeame/blob/main/docs/PRIVACIDAD.md")!
+    static let termsURL = URL(string: "https://github.com/DanielChineaDev/cuponeame/blob/main/docs/TERMINOS.md")!
+
     // Unidades de AdMob. Por defecto, los IDs de PRUEBA de Google: sustituir
     // por los reales en Config/Secrets.xcconfig (ADMOB_INTERSTITIAL_UNIT,
     // ADMOB_REWARDED_UNIT) antes de publicar.

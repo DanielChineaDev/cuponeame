@@ -14,6 +14,8 @@ import AppTrackingTransparency
 final class AdsManager {
     private(set) var adsInitialized = false
     private(set) var rewardedReady = false
+    /// El usuario está en una región donde puede reabrir el formulario RGPD.
+    private(set) var privacyOptionsRequired = false
 
     private var gatherStarted = false
     private var interstitial: InterstitialAd?
@@ -58,10 +60,18 @@ final class AdsManager {
         } catch {
             // Sin red o sin formulario: seguimos si UMP permite pedir anuncios.
         }
+        privacyOptionsRequired =
+            ConsentInformation.shared.privacyOptionsRequirementStatus == .required
         guard ConsentInformation.shared.canRequestAds else { return }
 
         _ = await ATTrackingManager.requestTrackingAuthorization()
         await initializeAdMob()
+    }
+
+    /// Reabre el formulario de consentimiento (RGPD exige poder cambiarlo).
+    func presentPrivacyOptions() async {
+        guard let viewController = AuthService.topViewController() else { return }
+        try? await ConsentForm.presentPrivacyOptionsForm(from: viewController)
     }
 
     private func initializeAdMob() async {
