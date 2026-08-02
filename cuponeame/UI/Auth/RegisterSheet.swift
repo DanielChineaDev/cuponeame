@@ -99,6 +99,8 @@ struct RegisterSheet: View {
                     .opacity(canSubmit ? 1 : 0.6)
                     .padding(.top, 6)
 
+                    SocialAuthButtons()
+
                     Text("Al crear la cuenta estrenas el pack de cupones de ejemplo.")
                         .font(.footnote)
                         .foregroundStyle(CuponColors.subtleText)

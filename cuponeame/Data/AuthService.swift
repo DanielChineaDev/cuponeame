@@ -1,6 +1,10 @@
 import Foundation
+import CryptoKit
+import UIKit
+import AuthenticationServices
 import FirebaseAuth
 import FirebaseFirestore
+import GoogleSignIn
 
 /// Errores propios del modo pareja, con mensaje en español.
 enum PartnerError: Error {
@@ -104,6 +108,125 @@ final class AuthService {
         }
     }
 
+    // MARK: - Google y Apple
+
+    /// Inicia sesión con Google; primera vez = crea el perfil y siembra el pack.
+    @discardableResult
+    func signInWithGoogle() async -> Bool {
+        guard let rootViewController = Self.topViewController() else { return false }
+        return await run {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw NSError(domain: "cuponeame.auth", code: -1)
+            }
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+            let authResult = try await Auth.auth().signIn(with: credential)
+            await self.ensureUserDocument(for: authResult.user,
+                                          fallbackName: result.user.profile?.name)
+        }
+    }
+
+    /// Nonce de la petición de Apple en curso (anti-replay).
+    private var currentAppleNonce: String?
+    private var appleFlowDelegate: AppleFlowDelegate?
+
+    /// Inicia sesión con Apple; primera vez = crea el perfil y siembra el pack.
+    @discardableResult
+    func signInWithApple() async -> Bool {
+        let nonce = Self.randomNonce()
+        currentAppleNonce = nonce
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = Self.sha256(nonce)
+
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        let delegate = AppleFlowDelegate()
+        appleFlowDelegate = delegate // retenido mientras la hoja está en pantalla
+        controller.delegate = delegate
+        controller.presentationContextProvider = delegate
+        let result: Result<ASAuthorization, Error> = await withCheckedContinuation { continuation in
+            delegate.continuation = continuation
+            controller.performRequests()
+        }
+        appleFlowDelegate = nil
+
+        switch result {
+        case .failure(let error):
+            if (error as? ASAuthorizationError)?.code == .canceled { return false }
+            errorMessage = "No se pudo iniciar sesión con Apple."
+            return false
+        case .success(let authorization):
+            guard let appleCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                  let tokenData = appleCredential.identityToken,
+                  let idToken = String(data: tokenData, encoding: .utf8),
+                  let rawNonce = currentAppleNonce else {
+                errorMessage = "No se pudo iniciar sesión con Apple."
+                return false
+            }
+            let credential = OAuthProvider.appleCredential(
+                withIDToken: idToken, rawNonce: rawNonce, fullName: appleCredential.fullName)
+            return await run {
+                let authResult = try await Auth.auth().signIn(with: credential)
+                // Apple solo da el nombre la primera vez.
+                await self.ensureUserDocument(for: authResult.user,
+                                              fallbackName: appleCredential.fullName?.givenName)
+            }
+        }
+    }
+
+    /// Primer acceso social: crea `users/{uid}` y siembra el pack de ejemplo.
+    private func ensureUserDocument(for user: FirebaseAuth.User, fallbackName: String?) async {
+        let ref = db.collection("users").document(user.uid)
+        let document = try? await ref.getDocument()
+        guard document?.exists != true else { return }
+        let name = fallbackName ?? user.displayName ?? "Sin nombre"
+        try? await ref.setData(["name": name, "email": user.email ?? ""], merge: true)
+        try? await CouponStore.seedDefaults(uid: user.uid)
+    }
+
+    private final class AppleFlowDelegate: NSObject, ASAuthorizationControllerDelegate,
+                                           ASAuthorizationControllerPresentationContextProviding {
+        var continuation: CheckedContinuation<Result<ASAuthorization, Error>, Never>?
+
+        func authorizationController(controller: ASAuthorizationController,
+                                     didCompleteWithAuthorization authorization: ASAuthorization) {
+            continuation?.resume(returning: .success(authorization))
+            continuation = nil
+        }
+
+        func authorizationController(controller: ASAuthorizationController,
+                                     didCompleteWithError error: Error) {
+            continuation?.resume(returning: .failure(error))
+            continuation = nil
+        }
+
+        func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+            MainActor.assumeIsolated {
+                AuthService.topViewController()?.view.window ?? ASPresentationAnchor()
+            }
+        }
+    }
+
+    /// Nonce aleatorio para Sign in with Apple (charset seguro para URL).
+    nonisolated static func randomNonce(length: Int = 32) -> String {
+        let charset = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._")
+        return String((0..<length).map { _ in charset.randomElement()! })
+    }
+
+    nonisolated static func sha256(_ input: String) -> String {
+        SHA256.hash(data: Data(input.utf8))
+            .map { String(format: "%02x", $0) }
+            .joined()
+    }
+
+    static func topViewController() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        var top = scenes.flatMap(\.windows).first(where: \.isKeyWindow)?.rootViewController
+        while let presented = top?.presentedViewController { top = presented }
+        return top
+    }
+
     func enterDemo() {
         isDemoMode = true
         userName = "Invitado"
@@ -123,6 +246,7 @@ final class AuthService {
         }
         do {
             try Auth.auth().signOut()
+            GIDSignIn.sharedInstance.signOut()
         } catch {
             errorMessage = "No se pudo cerrar la sesión."
         }

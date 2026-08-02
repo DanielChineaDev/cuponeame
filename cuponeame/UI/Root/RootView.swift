@@ -18,6 +18,7 @@ struct RootView: View {
         .onChange(of: auth.user?.uid, initial: true) { _, uid in
             if let uid {
                 store.attach(uid: uid)
+                PushService.shared.flushPendingToken()
             } else if !auth.isDemoMode {
                 store.detach()
             }

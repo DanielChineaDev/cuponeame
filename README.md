@@ -144,6 +144,19 @@ Las reglas de seguridad viven en el repo (`firestore.rules`, `storage.rules`); s
 firebase deploy --only firestore:rules,storage
 ```
 
+### Activar push y login social (una vez, en las consolas)
+
+La app ya lleva todo el código; falta activar los servicios:
+
+1. **Sign in with Apple**: en [developer.apple.com](https://developer.apple.com) → Identifiers → `com.bpo.cuponeame` → marcar *Sign in with Apple*. En Firebase Console → Authentication → Sign-in method → habilitar **Apple**.
+2. **Google**: Firebase Console → Authentication → Sign-in method → habilitar **Google**. El URL scheme ya está configurado vía `Config/Secrets.xcconfig` (copia `Secrets.example.xcconfig` si clonas en otra máquina).
+3. **Push (FCM)**: en developer.apple.com → Keys → crear una **clave APNs** (Apple Push Notifications) y subir el `.p8` en Firebase Console → Configuración del proyecto → Cloud Messaging. Marcar también *Push Notifications* en el identifier.
+4. **Cloud Functions** (avisan de regalos y canjes con la app cerrada): requiere plan **Blaze**. Desplegar con:
+
+```bash
+cd functions && npm install && cd .. && firebase deploy --only functions
+```
+
 ---
 
 ## 🗺️ Roadmap
@@ -159,7 +172,9 @@ firebase deploy --only firestore:rules,storage
 - [x] Reglas de seguridad de Firestore/Storage por usuario (en el repo; falta desplegar + App Check)
 - [x] Rediseño de identidad: logo vectorial + AppIcon nuevos, bienvenida animada y login/registro de marca
 - [x] Rediseño interior: lista con saludo y buscador de marca, Crear con banner y tarjetas, carnet degradado en Ajustes e Historial con resumen
-- [ ] Push remota (APNs/FCM) con la app cerrada — requiere Cloud Functions y clave APNs
+- [x] Push remota (FCM + Cloud Functions en `functions/`): regalos y canjes con la app cerrada — falta activar APNs/Blaze en consolas
+- [x] Sign in with Apple y Google (falta habilitar los proveedores en Firebase Console)
+- [x] Widgets de pantalla de bloqueo (circular y rectangular)
 
 ---
 

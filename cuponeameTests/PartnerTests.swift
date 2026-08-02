@@ -26,6 +26,23 @@ final class InviteCodeTests: XCTestCase {
     }
 }
 
+final class AuthCryptoTests: XCTestCase {
+
+    func testRandomNonceShape() {
+        let nonce = AuthService.randomNonce()
+        XCTAssertEqual(nonce.count, 32)
+        let charset = Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._")
+        XCTAssertTrue(nonce.allSatisfy { charset.contains($0) })
+        XCTAssertNotEqual(nonce, AuthService.randomNonce(), "Dos nonces no deben coincidir")
+    }
+
+    func testSHA256KnownVector() {
+        XCTAssertEqual(
+            AuthService.sha256("abc"),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+    }
+}
+
 /// El modo demo del modo pareja funciona sin Firebase, así que se puede
 /// probar el flujo completo de vinculación.
 @MainActor

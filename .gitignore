@@ -15,3 +15,6 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Secretos de build
+Config/Secrets.xcconfig
