@@ -56,6 +56,10 @@ struct CouponListScreen: View {
                                     .buttonStyle(.plain)
                                 }
 
+                                // Banner tras los primeros cupones, dentro del flujo.
+                                BannerSlotView(slot: .coupons)
+                                    .padding(.vertical, 4)
+
                                 if !exhausted.isEmpty {
                                     HStack(spacing: 8) {
                                         Image(systemName: "nosign")
@@ -101,6 +105,7 @@ struct CouponListScreen: View {
             }
             .background(CuponColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .activateBannerSlot(.coupons)
             .fullScreenCover(isPresented: $showProfile) {
                 ProfileSheet()
             }

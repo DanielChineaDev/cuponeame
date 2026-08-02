@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 import Observation
 import GoogleMobileAds
 import UserMessagingPlatform
@@ -20,6 +20,17 @@ final class AdsManager {
     private var rewarded: RewardedAd?
     private var couponOpens = 0
     private var lastInterstitialAt: Date?
+
+    /// Banners en línea: cada pantalla necesita su PROPIA instancia (un UIView
+    /// solo tiene un superview y las pestañas conviven montadas). `loaded` evita
+    /// dejar un hueco vacío cuando no llega anuncio.
+    enum BannerSlot: CaseIterable { case coupons, create, settings }
+    private(set) var banners: [BannerSlot: BannerView] = [:]
+    private(set) var bannerLoaded: [BannerSlot: Bool] = [:]
+    private var bannerDelegates: [BannerSlot: BannerDelegate] = [:]
+
+    func banner(_ slot: BannerSlot) -> BannerView? { banners[slot] }
+    func isBannerLoaded(_ slot: BannerSlot) -> Bool { bannerLoaded[slot] ?? false }
 
     /// Margen mínimo entre intersticiales (no ametrallar al usuario).
     static let minGapSeconds: TimeInterval = 45
@@ -58,6 +69,10 @@ final class AdsManager {
             MobileAds.shared.start { _ in continuation.resume() }
         }
         adsInitialized = true
+        #if DEBUG
+        NSLog("AdsDebug: AdMob inicializado")
+        #endif
+        makeBanners()
         preloadInterstitial()
         preloadRewarded()
     }
@@ -67,6 +82,46 @@ final class AdsManager {
         interstitial = nil
         rewarded = nil
         rewardedReady = false
+        banners = [:]
+        bannerLoaded = [:]
+        bannerDelegates = [:]
+    }
+
+    // MARK: - Banners
+
+    private func makeBanners() {
+        // Ancho de la ventana real (UIScreen.main miente en Split View).
+        let windowWidth = AuthService.topViewController()?.view.window?.bounds.width ?? 393
+        for slot in BannerSlot.allCases {
+            // Al ancho del contenido (padding lateral de 16 en las pantallas).
+            let banner = BannerView(
+                adSize: currentOrientationAnchoredAdaptiveBanner(width: windowWidth - 32))
+            banner.adUnitID = AppConfig.admobBannerUnit
+            let delegate = BannerDelegate()
+            delegate.onLoad = { [weak self] loaded in self?.bannerLoaded[slot] = loaded }
+            banner.delegate = delegate
+            bannerDelegates[slot] = delegate
+            banners[slot] = banner
+        }
+        // La carga se dispara al aparecer la ranura en pantalla: ahí sí hay
+        // rootViewController (al arrancar la ventana aún no existe).
+    }
+
+    /// La pantalla con la ranura apareció: engancha el controlador y carga.
+    func activateBanner(_ slot: BannerSlot, isPremium: Bool) {
+        #if DEBUG
+        NSLog("AdsDebug: activateBanner premium=%d init=%d banner=%d vc=%d",
+              isPremium ? 1 : 0, adsInitialized ? 1 : 0,
+              banners[slot] != nil ? 1 : 0,
+              AuthService.topViewController() != nil ? 1 : 0)
+        #endif
+        guard !isPremium, adsInitialized,
+              let banner = banners[slot],
+              let viewController = AuthService.topViewController() else { return }
+        // Ya cargado: nada que hacer (evita repetir peticiones al volver a la tab).
+        guard bannerLoaded[slot] != true else { return }
+        banner.rootViewController = viewController
+        banner.load(Request())
     }
 
     // MARK: - Intersticial (cada 3 cupones abiertos)
@@ -126,5 +181,75 @@ final class AdsManager {
         }
         preloadRewarded()
         return earned
+    }
+}
+
+/// Delegado del banner: avisa cuando recibe o falla un anuncio.
+private final class BannerDelegate: NSObject, BannerViewDelegate {
+    var onLoad: ((Bool) -> Void)?
+
+    func bannerViewDidReceiveAd(_ bannerView: BannerView) {
+        Task { @MainActor in onLoad?(true) }
+    }
+
+    func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+        #if DEBUG
+        NSLog("AdsDebug: banner falló: %@", error.localizedDescription)
+        #endif
+        Task { @MainActor in onLoad?(false) }
+    }
+}
+
+/// Banner adaptativo (instancia gestionada por AdsManager).
+struct BannerAdView: UIViewRepresentable {
+    let banner: BannerView
+
+    func makeUIView(context: Context) -> BannerView { banner }
+    func updateUIView(_ uiView: BannerView, context: Context) {}
+}
+
+/// Ranura de banner para meter en el contenido: no ocupa nada si el usuario es
+/// premium, si AdMob no arrancó o si el anuncio no llegó.
+struct BannerSlotView: View {
+    let slot: AdsManager.BannerSlot
+
+    @Environment(AdsManager.self) private var ads
+    @Environment(MonetizationStore.self) private var monetization
+
+    var body: some View {
+        // Sin anuncio no ocupa NADA (ni el espaciado del contenedor): la carga
+        // la dispara la pantalla con `.activateBannerSlot(_:)`, no esta vista,
+        // porque un Group vacío es EmptyView y no recibiría onAppear.
+        if !monetization.isPremium, ads.adsInitialized,
+           ads.isBannerLoaded(slot), let banner = ads.banner(slot) {
+            BannerAdView(banner: banner)
+                .frame(width: banner.adSize.size.width, height: banner.adSize.size.height)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.1), radius: 8, y: 3)
+        }
+    }
+}
+
+extension View {
+    /// La pantalla pide su banner al aparecer (y cuando AdMob termina de
+    /// inicializar). Va en la pantalla, no en la ranura, para que la ranura
+    /// pueda desaparecer del todo si no hay anuncio.
+    func activateBannerSlot(_ slot: AdsManager.BannerSlot) -> some View {
+        modifier(ActivateBannerSlot(slot: slot))
+    }
+}
+
+private struct ActivateBannerSlot: ViewModifier {
+    let slot: AdsManager.BannerSlot
+
+    @Environment(AdsManager.self) private var ads
+    @Environment(MonetizationStore.self) private var monetization
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear { ads.activateBanner(slot, isPremium: monetization.isPremium) }
+            .onChange(of: ads.adsInitialized) { _, _ in
+                ads.activateBanner(slot, isPremium: monetization.isPremium)
+            }
     }
 }

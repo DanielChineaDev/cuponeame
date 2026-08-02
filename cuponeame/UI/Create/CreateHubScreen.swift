@@ -26,6 +26,8 @@ struct CreateHubScreen: View {
 
                         partnerCard
 
+                        BannerSlotView(slot: .create)
+
                         ideas
                     }
                     .padding(16)
@@ -36,6 +38,7 @@ struct CreateHubScreen: View {
             }
             .background(CuponColors.background)
             .toolbar(.hidden, for: .navigationBar)
+            .activateBannerSlot(.create)
             .fullScreenCover(isPresented: $showPremium) {
                 PremiumSheet()
             }

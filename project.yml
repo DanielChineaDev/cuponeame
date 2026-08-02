@@ -65,6 +65,7 @@ targets:
         GADApplicationIdentifier: $(ADMOB_APP_ID)
         ADMOB_INTERSTITIAL_UNIT: $(ADMOB_INTERSTITIAL_UNIT)
         ADMOB_REWARDED_UNIT: $(ADMOB_REWARDED_UNIT)
+        ADMOB_BANNER_UNIT: $(ADMOB_BANNER_UNIT)
         NSUserTrackingUsageDescription: Usamos este permiso para mostrarte anuncios más relevantes. Puedes decir que no y la app funciona igual.
         SKAdNetworkItems:
           - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
