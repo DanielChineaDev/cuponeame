@@ -8,6 +8,8 @@ struct CouponDetailScreen: View {
 
     @Environment(AuthService.self) private var auth
     @Environment(CouponStore.self) private var store
+    @Environment(MonetizationStore.self) private var monetization
+    @Environment(AdsManager.self) private var ads
     @Environment(\.dismiss) private var dismiss
 
     @State private var showRedeemConfirmation = false
@@ -37,6 +39,9 @@ struct CouponDetailScreen: View {
                 .padding(.bottom, 12)
         }
         .background(CuponColors.background)
+        // Anuncio cada 3 aperturas de cupón, al salir (nunca bloquea la vista).
+        .onAppear { ads.registerCouponOpen() }
+        .onDisappear { ads.maybeShowInterstitial(isPremium: monetization.isPremium) }
         .navigationTitle("Detalle de cupón")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
