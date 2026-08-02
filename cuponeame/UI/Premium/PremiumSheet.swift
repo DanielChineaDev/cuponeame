@@ -35,6 +35,17 @@ struct PremiumSheet: View {
                         }
                         .font(.subheadline)
                         .foregroundStyle(CuponColors.subtleText)
+
+                        Text("Pago único, sin suscripción. Se cobra en tu cuenta de Apple.")
+                            .font(.caption)
+                            .foregroundStyle(CuponColors.subtleText)
+                            .multilineTextAlignment(.center)
+
+                        HStack(spacing: 16) {
+                            Link("Términos de uso", destination: AppConfig.termsURL)
+                            Link("Privacidad", destination: AppConfig.privacyPolicyURL)
+                        }
+                        .font(.caption)
                     }
                 }
                 .padding(20)

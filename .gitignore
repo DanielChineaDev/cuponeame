@@ -18,3 +18,4 @@ xcuserdata/
 
 # Secretos de build
 Config/Secrets.xcconfig
+DerivedData-device/

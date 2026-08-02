@@ -12,6 +12,7 @@
 		14AC9DEAED2525D06EA1E205 /* CreateHubScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E236FCF2E28C0A869A713909 /* CreateHubScreen.swift */; };
 		161263598FD261B4E04A3A84 /* PartnerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A442ECF97780D7F996B2E0F3 /* PartnerScreen.swift */; };
 		1AD042D33133537DEE1DCAB5 /* InviteCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98FA7D24BC1B89F99F85D5BB /* InviteCode.swift */; };
+		1B430AF94850A714900012DD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8236EB0F2FD03560C9D6E40C /* PrivacyInfo.xcprivacy */; };
 		1F63A4034DFAC53DAA565C76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B76E6044523884B7E12658 /* RootView.swift */; };
 		1F94D04831F1167D010F9D14 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8F01293DABC2D4E0ECAFEA2F /* FirebaseFirestore */; };
 		24DB3624FECD637285398294 /* HistoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7598A64787C0BC5ED3AA4A60 /* HistoryScreen.swift */; };
@@ -34,6 +35,7 @@
 		670D43DAF5B9E1B9E5D6055E /* CouponFormScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26EB6DB1254CD494027E0E95 /* CouponFormScreen.swift */; };
 		6DD76FD3E72F1FC1F3734723 /* CuponeameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CCF887163FD6570F2225A4 /* CuponeameApp.swift */; };
 		719D6F3D70F987A48BC43923 /* MonetizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58796A855BF557F710BAE6F3 /* MonetizationTests.swift */; };
+		75B331EAB6F738B746C116A4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 2FED69EBC6B039470366777C /* PrivacyInfo.xcprivacy */; };
 		77EC2B141490BBF6143532AE /* BrandLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8560EAFD4623D38D402BD303 /* BrandLogo.swift */; };
 		78CC2297DD857B9BCFA311DB /* CouponTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD0F4A73D6573C4EBF91B37 /* CouponTemplate.swift */; };
 		79F502649017DB05265AB24F /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 6A1D028B2AF5B35E82B8FF0A /* Kingfisher */; };
@@ -115,6 +117,7 @@
 		25CEF014CE762DC305BB9415 /* cuponeameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cuponeameUITests.swift; sourceTree = "<group>"; };
 		26EB6DB1254CD494027E0E95 /* CouponFormScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponFormScreen.swift; sourceTree = "<group>"; };
 		29A4F064A1B0058A4BB2F382 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		2FED69EBC6B039470366777C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3AAB6092A4CCEED4CE0656E3 /* CuponeameTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CuponeameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB5DD0A1E5A4947F03FD827 /* Coupon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coupon.swift; sourceTree = "<group>"; };
 		3DC41F16556D0B44595C5FEC /* CouponListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponListScreen.swift; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 		794FE4004E8E22A17D4B3DDE /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		7BEDCE732AD977C8F4B8CD96 /* WelcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
 		7F73E7AFC153A1829E2BAD45 /* CouponImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponImageView.swift; sourceTree = "<group>"; };
+		8236EB0F2FD03560C9D6E40C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		830EB05F5FF68661951E8AA9 /* CouponCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CouponCard.swift; sourceTree = "<group>"; };
 		8560EAFD4623D38D402BD303 /* BrandLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandLogo.swift; sourceTree = "<group>"; };
 		89D2F85147AB3640D2D26C90 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshot.swift; sourceTree = "<group>"; };
@@ -186,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				63C76B8DDA449CE1D471D676 /* Assets.xcassets */,
+				8236EB0F2FD03560C9D6E40C /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -212,6 +217,7 @@
 				F223BB9289C7BA756715D207 /* CuponWidget.entitlements */,
 				4742C42F3403DD07B84EFFFB /* CuponWidget.swift */,
 				C97DD9E491249FE1D96B36CD /* Info.plist */,
+				2FED69EBC6B039470366777C /* PrivacyInfo.xcprivacy */,
 			);
 			path = CuponWidget;
 			sourceTree = "<group>";
@@ -485,6 +491,7 @@
 			buildConfigurationList = C52127695B769BF2E3E2B9F7 /* Build configuration list for PBXNativeTarget "CuponWidget" */;
 			buildPhases = (
 				4FBA61992980EB344859C347 /* Sources */,
+				AD503F8E52EACBEC9A975284 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -560,6 +567,15 @@
 			files = (
 				FB9E92D542908A7440B44DA3 /* Assets.xcassets in Resources */,
 				3D8099B386FA636E70BF294C /* GoogleService-Info.plist in Resources */,
+				1B430AF94850A714900012DD /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AD503F8E52EACBEC9A975284 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75B331EAB6F738B746C116A4 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -809,6 +825,7 @@
 		DBF36D93ECB59C64B4251434 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = cuponeame/Cuponeame.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -912,6 +929,7 @@
 		ECD63317C80AC49708D1D32A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = cuponeame/Cuponeame.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

@@ -145,6 +145,23 @@ Las reglas de seguridad viven en el repo (`firestore.rules`, `storage.rules`); s
 firebase deploy --only firestore:rules,storage
 ```
 
+### Checklist App Store
+
+Lo que ya cumple la app (verificado en un archive de Release):
+
+- [x] **Privacy manifests** (`PrivacyInfo.xcprivacy`) en app y widget, con los *required reason APIs* (UserDefaults, timestamps, disco, boot time) y los datos recogidos.
+- [x] **Textos de permisos**: fotos y seguimiento (ATT).
+- [x] **47 SKAdNetworkIdentifier** de Google (AdMob).
+- [x] **Eliminar cuenta** desde Ajustes (requisito 5.1.1(v)).
+- [x] **Sign in with Apple** junto al login de Google (requisito 4.8).
+- [x] **Restaurar compras** visible + aviso de pago único y enlaces legales en el paywall.
+- [x] **Consentimiento RGPD** (UMP) con opción de cambiarlo en Ajustes › Privacidad de anuncios.
+- [x] **Política de privacidad** y **Términos de uso** enlazados desde la app ([docs/PRIVACIDAD.md](docs/PRIVACIDAD.md), [docs/TERMINOS.md](docs/TERMINOS.md)).
+- [x] `ITSAppUsesNonExemptEncryption = false`, icono, launch screen y orientación fijada.
+- [x] `aps-environment` parametrizado: `development` en Debug, `production` en Release.
+
+Antes de enviar, en App Store Connect: ficha (nombre, descripción, capturas), URL de política de privacidad, respuestas del *App Privacy*, y el producto `com.bpo.cuponeame.premium`.
+
 ### Activar push y login social (una vez, en las consolas)
 
 La app ya lleva todo el código; falta activar los servicios:
